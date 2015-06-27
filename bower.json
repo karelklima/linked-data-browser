@@ -1,0 +1,27 @@
+{
+  "name": "linked-data-browser",
+  "version": "1.0.0",
+  "homepage": "https://github.com/karelklima/linked-data-browser",
+  "authors": [
+    "karelklima <karelklima@gmail.com>"
+  ],
+  "description": "Linked Data Browser",
+  "keywords": [
+    "linked",
+    "data",
+    "browser"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.1",
+    "angular-material": "~0.10.0",
+    "jquery": "~2.1.4"
+  }
+}
