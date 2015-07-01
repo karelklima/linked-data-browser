@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node linked-data-browser.js",
     "test": "test",
-    "postinstall": "./node_modules/bower/bin/bower install"
+    "postinstall": "bower install"
   },
   "repository": {
     "type": "git",
