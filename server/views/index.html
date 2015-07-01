@@ -1,13 +1,37 @@
-{% extends 'layouts/default.html' %}
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:ng="http://angularjs.org" id="ng-app" ng-app="ldApp">
 
-{% block content %}
-<h1>Something went wrong...</h1>
-<h3>404 - Page Not Found</h3>
-<div id="error-message-box">
-    <div id="error-stack-trace">
-        <pre>
-            <code>{{error}}</code>
-        </pre>
-    </div>
-</div>
-{% endblock %}
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="fragment" content="!">
+
+    <title>{{appName}} - {{title}}</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    <meta name="keywords" content="linked data browser">
+    <meta name="description" content="Linked Data Browser - a universal explorer for Linked Data">
+
+    {% for asset in assets.css %}
+    <link rel="stylesheet" href="{{asset.url}}">
+    {% endfor %}
+
+    {% for asset in assets.js %}
+    <script type="text/javascript" src="{{asset.url}}"></script>
+    {% endfor %}
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div ui-view id="root"></div>
+
+{% for asset in assets.jsFooter %}
+<script type="text/javascript" src="{{asset.url}}"></script>
+{% endfor %}
+</body>
+</html>

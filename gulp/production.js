@@ -5,7 +5,7 @@ var _ = require('lodash');
 
 var defaultTasks = ['clean', 'build-components-css', 'build-components-js', 'serve:production'];
 
-var components = require('../config/components.js');
+var components = require('../config/bower-components.js');
 
 console.log(components);
 

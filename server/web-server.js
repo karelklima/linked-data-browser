@@ -13,6 +13,8 @@ var expressJwt = require('express-jwt');
 var config = require('../config');
 var expressConfig = require('../config/express');
 
+var assetsRouter = require('./routers/assets-router');
+
 var app = express();
 
 // Setup views directory
@@ -27,10 +29,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(methodOverride());
 
-// Setup index
-app.get('/', function(req, res){
-    res.render('index');
-});
+
 
 // Setup authentication and authorization
 app.use('/api', expressJwt({
@@ -45,6 +44,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 expressConfig(app);
+
+assetsRouter(app);
+
+// Setup index
+app.get('/', function(req, res){
+    res.render('index');
+});
 
 // Internal server error or 404
 app.use(function (err, req, res, next) {

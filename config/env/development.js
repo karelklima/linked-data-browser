@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    db: 'mongodb://' + (process.env.DB_PORT_27017_TCP_ADDR || 'localhost') + '/ld-browser-dev',
+    env: 'development',
     debug: true,
     logging: {
         format: 'tiny'
@@ -12,7 +12,7 @@ module.exports = {
     },
     hostname: 'http://localhost:3000',
     app: {
-        name: 'MEAN - A Modern Stack - Development'
+        name: 'Linked Data Browser [dev]'
     },
     strategies: {
         local: {

@@ -7,30 +7,16 @@
 
     <title>{{appName}} - {{title}}</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-    <meta name="keywords" content="node.js, express, mongoose, mongodb, angularjs, swig">
-    <meta name="description" content="MEAN - A Modern Stack: MongoDB, ExpressJS, AngularJS, NodeJS. (BONUS: Passport User Support).">
+    <meta name="keywords" content="linked data browser">
+    <meta name="description" content="Linked Data Browser - a universal explorer for Linked Data">
 
-    <meta property="fb:app_id" content="APP_ID">
-    <meta property="og:title" content="{{appName}} - {{title}}">
-    <meta property="og:description" content="MEAN - A Modern Stack: MongoDB, ExpressJS, AngularJS, NodeJS. (BONUS: Passport User Support).">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="APP_URL">
-    <meta property="og:image" content="APP_LOGO">
-    <meta property="og:site_name" content="MEAN - A Modern Stack">
-    <meta property="fb:admins" content="APP_ADMIN">
 
-    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css">
-
-    {% for file in aggregatedassets.header.css %}
-    <link rel="stylesheet" href="{{file}}">
+    {% for asset in assets.css %}
+    <link rel="stylesheet" href="{{asset.url}}">
     {% endfor %}
 
-    {% for file in aggregatedassets.footer.css %}
-    <link rel="stylesheet" href="{{file}}">
-    {% endfor %}
-
-    {% for file in aggregatedassets.header.js %}
-    <script type="text/javascript" src="{{file}}"></script>
+    {% for asset in assets.js %}
+    <script type="text/javascript" src="{{asset.url}}"></script>
     {% endfor %}
 
     <!--[if lt IE 9]>

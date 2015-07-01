@@ -42,7 +42,6 @@ module.exports = function(app) {
     app.set('view engine', 'html');
 
     // Dynamic helpers
-    // TODO remove???
     app.use(helpers(config.app.name));
 
     // Flash messages support
