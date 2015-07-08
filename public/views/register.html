@@ -1,0 +1,28 @@
+<div class="row" data-ng-controller="RegisterController as register">
+
+    <hr class="spacer-20 hidden-xs"/>
+
+    <div class="well well-lg col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
+
+        <form ng-submit="register.register()">
+
+            <fieldset>
+                <legend>Register new account</legend>
+
+                <div class="form-group">
+                    <input required type="email" class="form-control" id="email" ng-model="register.profile.email" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <input required type="password" class="form-control" id="password" ng-model="register.profile.password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <input required type="password" class="form-control" id="passwordConfirm" ng-model="register.profile.passwordConfirm" placeholder="Confirm password">
+                </div>
+                <p><button type="submit" class="btn btn-success btn-block btn-lg">Register</button></p>
+                <a ui-sref="root.login">Login</a>
+
+            </fieldset>
+        </form>
+
+    </div>
+</div>

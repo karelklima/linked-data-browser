@@ -1,0 +1,21 @@
+<div class="row" data-ng-controller="ProfileController as profile">
+
+    <hr class="spacer-20 hidden-xs"/>
+
+    <div class="well well-lg col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
+
+
+            <fieldset>
+                <legend>{{ profile.identity.profile.email }}</legend>
+
+                <p>Roles: {{ profile.identity.profile.roles }}</p>
+
+                <p>Administrative priviledges:
+                    <span ng-show="profile.identity.isAdmin">yes</span>
+                    <span ng-hide="profile.identity.isAdmin">no</span>
+                </p>
+
+            </fieldset>
+
+    </div>
+</div>

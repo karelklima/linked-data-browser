@@ -6,7 +6,7 @@ var config = require('../../config');
 var assetsManager = require('../lib/assets-manager');
 var indexController = require('../controllers/index-controller');
 
-module.exports = function(config, app, auth) {
+module.exports = function(app) {
 
     app.route('/').get(indexController.render);
 

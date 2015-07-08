@@ -1,9 +1,9 @@
 (function() {
 
-    angular.module('ldApp')
+    angular.module('app.controllers')
 
-        .controller('RootController', ['$scope', '$log', function ($scope, $log) {
-
+        .controller('RootController', ['$http', 'Identity', 'store',
+            function ($http, Identity, store) {
 
 
         }]);

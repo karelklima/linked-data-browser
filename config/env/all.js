@@ -6,6 +6,7 @@ var rootPath = path.normalize(__dirname + '/../..');
 
 module.exports = {
     root: rootPath,
+    datastore: rootPath + '/datastore',
     http: {
         port: process.env.PORT || 3000
     },
@@ -36,5 +37,10 @@ module.exports = {
     },
 
     // The session cookie name
-    sessionName: 'connect.sid'
+    sessionName: 'connect.sid',
+
+    adminAccount: {
+        email: 'admin@admin.com',
+        password: 'admin'
+    }
 };
