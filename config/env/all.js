@@ -15,32 +15,54 @@ module.exports = {
     // Project-wide template engine
     templateEngine: 'swig',
 
-    // The secret should be set to a non-guessable string that
-    // is used to compute a session hash
-    sessionSecret: 'LDB',
+    defaultLayout: 'single-column',
 
-    // The name of the MongoDB collection to store sessions in
-    sessionCollection: 'sessions',
-
-    // The session cookie settings
-    sessionCookie: {
-        path: '/',
-        httpOnly: true,
-        // If secure is set to true then it will cause the cookie to be set
-        // only when SSL-enabled (HTTPS) is used, and otherwise it won't
-        // set a cookie. 'true' is recommended yet it requires the above
-        // mentioned pre-requisite.
-        secure: false,
-        // Only set the maxAge to null if the cookie shouldn't be expired
-        // at all. The cookie will expunge when the browser is closed.
-        maxAge: null
-    },
-
-    // The session cookie name
-    sessionName: 'connect.sid',
-
-    adminAccount: {
+    defaultAdminAccount: {
         email: 'admin@admin.com',
         password: 'admin'
+    },
+
+    defaultEndpoint: {
+        name: 'DBpedia',
+        alias: 'dbpedia',
+        url: 'http://dbpedia.org/sparql'
+    },
+
+    endpointParams: {
+        format: "application/ld+json",
+        timeout: "10000"
+    },
+
+    endpointRequestTimeout: 10000,
+
+    describeQuery: {
+        properties: [
+            "rdf:type",
+            "foaf:name",
+            "dcterms:title",
+            "skos:prefLabel",
+            "http://schema.org/name"
+        ],
+        sampleCount: 5
+    },
+
+    queryAdapter: {
+        defaultContext: false,
+        compactOptions: {"graph" : true, "compactArrays" : false},
+        defaultModel: false,
+        replacePrefixes: true,
+        reconstructComplexObjects: true,
+        dates : {
+            convert : true,
+            suffix : "Iso",
+            inputTypes : [
+                "http://www.w3.org/2001/XMLSchema#date"
+            ],
+            inputFormats : [
+                "YYYY-MM-DDZ",
+                "YYYY-MM-DDTHH:mm:ssZ"
+            ],
+            outputFormat : "YYYY-MM-DD"
+        }
     }
 };

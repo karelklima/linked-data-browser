@@ -57,7 +57,7 @@ gulp.task('build:production', ['clean', 'build-components'], function() {
 
 gulp.task('serve:production', ['env:production', 'build:production'], function () {
   plugins.nodemon({
-    script: 'linked-data-browser.js',
+    script: 'bootstrap.js',
     ext: 'html js',
     env: { 'NODE_ENV': 'production' } ,
     ignore: ['./node_modules/**']

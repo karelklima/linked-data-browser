@@ -1,1 +1,64 @@
-<div>Endpoints</div>
+<div ng-controller="AdminEndpointsController">
+
+    <hr class="spacer-20"/>
+
+    <table st-table="displayedEndpoints" st-safe-src="endpoints" class="table table-striped table-hover" ng-cloak>
+        <thead>
+            <tr>
+                <th colspan="5"><input st-search class="form-control" placeholder="Search endpoints" type="text"/></th>
+            </tr>
+            <tr>
+                <th st-sort="name" st-sort-default="true">Name</th>
+                <th st-sort="alias">Alias</th>
+                <th st-sort="url">URL</th>
+                <th>Default</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="endpoint in displayedEndpoints">
+            <td>{{ endpoint.name }}</td>
+            <td>{{ endpoint.alias }}</td>
+            <td>{{ endpoint.url }}</td>
+            <td>{{ endpoint.default | boolean | uppercase }}</td>
+            <td class="text-right">
+                    <span ng-if="!endpoint.default">
+                        <button class="btn btn-default btn-sm" ng-click="makeDefault(endpoint)">Make default</button>
+                    </span>
+                <button class="btn btn-default btn-sm" ng-click="remove(endpoint)">Delete</button>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5" class="text-center">
+                <div st-pagination st-items-by-page="10" st-displayed-pages="10"></div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <form class=" well well-lg form-inline" ng-submit="create()">
+
+        <fieldset>
+            <legend>Create new SPARQL endpoint</legend>
+
+            <div class="form-group">
+                <label class="sr-only" for="endpointName">Name</label>
+                <input required type="text" class="form-control" id="endpointName" ng-model="endpointForm.name" placeholder="Name">
+            </div>
+            <div class="form-group">
+                <label class="sr-only" for="endpointAlias">Alias</label>
+                <input required type="text" class="form-control" id="endpointAlias" ng-model="endpointForm.alias" placeholder="Alias">
+            </div>
+            <div class="form-group">
+                <label class="sr-only" for="endpointUrl">URL</label>
+                <input required type="url" class="form-control input-wide" id="endpointUrl" ng-model="endpointForm.url" placeholder="URL">
+            </div>
+            <button type="submit" class="btn btn-success">Create</button>
+
+        </fieldset>
+    </form>
+
+
+</div>

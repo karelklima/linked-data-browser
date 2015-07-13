@@ -30,6 +30,7 @@
     "angular-animate": "~1.4.1",
     "ng-lodash": "~0.2.3",
     "angular-loading-bar": "~0.8.0",
-    "angular-toastr": "~1.4.1"
+    "angular-toastr": "~1.4.1",
+    "angular-smart-table": "~2.1.0"
   }
 }

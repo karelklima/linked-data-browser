@@ -22,7 +22,7 @@ function Users() {
     }
 
     function createAdminAccount() {
-        var admin = config.adminAccount;
+        var admin = config.defaultAdminAccount;
         users.insert({
             email: admin.email,
             password: hashPassword(admin.password),
@@ -80,7 +80,11 @@ function Users() {
 
     this.removeById = function(id) {
         return users.removeById(id);
-    }
+    };
+
+    this.updateById = function(id, data) {
+        return users.updateById(id, data);
+    };
 
 }
 

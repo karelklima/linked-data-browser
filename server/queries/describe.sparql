@@ -1,0 +1,52 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX frbr: <http://purl.org/vocab/frbr/core#>
+PREFIX my: <http://my/>
+
+PREFIX resource: {{ resource }}
+
+CONSTRUCT {
+    resource: my:out my:outcontainer .
+    my:outcontainer ?outPredicate ?outObject .
+    my:outcontainer a ?resourceType .
+    resource: my:labels ?outPredicate , ?outObjectType .
+    ?outPredicate my:label ?outPredicateLabel .
+    ?outObjectType my:label ?outObjectTypeLabel .
+    ?outObject a ?outObjectType ;
+            ?outSecondaryPredicate ?outSecondaryObject .
+
+    resource: my:in my:incontainer .
+    my:incontainer ?inPredicate ?inObject .
+    resource: my:labels ?inPredicate , ?inObjectType .
+    ?inPredicate my:label ?inPredicateLabel .
+    ?inObjectType my:label ?inObjectTypeLabel .
+    ?inObject a ?inObjectType ;
+            ?inSecondaryPredicate ?inSecondaryObject .
+
+}
+
+WHERE {
+    OPTIONAL {
+        resource: ?outPredicate ?outObject .
+        MINUS { resource: a ?outObject } .
+        OPTIONAL { resource: a ?resourceType }
+        OPTIONAL {
+            ?outObject a ?outObjectType  .
+            OPTIONAL { ?outObjectType rdfs:label ?outObjectTypeLabel } .
+        }
+        OPTIONAL { ?outPredicate rdfs:label ?outPredicateLabel } .
+        VALUES ?outSecondaryPredicate { foaf:name dcterms:title skos:prefLabel }
+        OPTIONAL { ?outObject ?outSecondaryPredicate ?outSecondaryObject } .
+    } .
+    OPTIONAL {
+        ?inObject ?inPredicate resource: .
+        OPTIONAL {
+            ?inObject a ?inObjectType  .
+            OPTIONAL { ?inObjectType rdfs:label ?inObjectTypeLabel } .
+        }
+        OPTIONAL { ?inPredicate rdfs:label ?inPredicateLabel } .
+        VALUES ?inSecondaryPredicate { foaf:name dcterms:title skos:prefLabel }
+        OPTIONAL { ?inObject ?inSecondaryPredicate ?inSecondaryObject } .
+    }
+
+}
+

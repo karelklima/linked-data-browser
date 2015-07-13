@@ -1,9 +1,39 @@
-a {
+body, html {
+
+}
+
+a, th[st-sort] {
     cursor: pointer;
 }
 
 .main-container {
     padding-top: 64px;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #DDD;
+    text-align: center;
+}
+
+.nav-tabs > li {
+    float: none;
+    display: inline-block;
+}
+
+.tabs-fixed-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 64px;
+    z-index: 1000;
+    background: #FFF;
+}
+
+hr.tabs-fixed-clear {
+    height: 44px;
+    border: 0;
+    clear: both;
+    margin: 0;
 }
 
 hr.spacer-10 {
@@ -17,6 +47,40 @@ hr.spacer-20 {
     clear: both;
     margin:0 0 20px;
 }
+
+@media (min-width: 768px) {
+    .input-wide {
+        width: 250px !important;
+    }
+    .input-search {
+        width: 300px !important;
+    }
+}
+@media (min-width: 992px) {
+    .input-wide {
+        width: 380px !important;
+    }
+    .input-search {
+        width: 450px !important;
+    }
+}
+@media (min-width: 1200px) {
+    .input-wide {
+        width: 500px !important;
+    }
+    .input-search {
+        width: 500px !important;
+    }
+}
+
+select.select-endpoint {
+    text-align: center !important;
+    width: 120px !important;
+}
+select.select-endpoint option {
+    text-align: center !important;
+}
+
 
 .toast {
     opacity: 1 !important;
@@ -70,4 +134,20 @@ hr.spacer-20 {
 #toasts-container > :hover {
     opacity: 1;
     cursor: pointer;
+}
+
+.st-sort-ascent:before{
+    content: '\25B2';
+}
+
+.st-sort-descent:before{
+    content: '\25BC';
+}
+
+.table tbody > tr > td{
+    vertical-align: middle;
+}
+
+.table thead input {
+    font-weight: normal !important;
 }

@@ -27,7 +27,7 @@ function AssetsManager() {
         });
         iterator = 1000;
         _.forEach(bowerComponents.js, function(jsFile) {
-            addAsset(true, false, 'js', jsFile, iterator--);
+            addAsset(false, false, 'js', jsFile, iterator--);
         });
     }
 
@@ -40,7 +40,7 @@ function AssetsManager() {
         var jsFiles = glob.sync(baseDir + '/public/**/*.js');
         iterator = 500;
         _.forEach(jsFiles, function(jsFile) {
-            addAsset(true, false, 'js', jsFile, iterator--);
+            addAsset(false, false, 'js', jsFile, iterator--);
         });
     }
 

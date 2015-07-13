@@ -57,12 +57,27 @@
                 this.remove = function(userData) {
                     var deferred = $q.defer();
                     $http.delete('/api/users', { params: userData })
-                        .success(function(data) {
+                        .success(function(data, a, b, c) {
                             $rootScope.$emit('user-removed', userData);
                             deferred.resolve();
                         })
                         .error(function() {
                             $rootScope.$emit('user-removal-failed', userData);
+                            deferred.reject();
+                        });
+
+                    return deferred.promise;
+                };
+
+                this.update = function(userData) {
+                    var deferred = $q.defer();
+                    $http.put('/api/users', { params: userData })
+                        .success(function(data) {
+                            $rootScope.$emit('user-updated', userData);
+                            deferred.resolve();
+                        })
+                        .error(function() {
+                            $rootScope.$emit('user-update-failed', userData);
                             deferred.reject();
                         });
 

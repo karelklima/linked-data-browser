@@ -2,9 +2,9 @@
   "name": "linked-data-browser",
   "version": "1.0.0",
   "description": "Linked Data Browser",
-  "main": "linked-data-browser.js",
+  "main": "bootstrap.js",
   "scripts": {
-    "start": "node linked-data-browser.js",
+    "start": "node bootstrap.js",
     "test": "test",
     "postinstall": "bower install"
   },
@@ -39,11 +39,15 @@
     "express-jwt": "^3.0.1",
     "express-validator": "^2.12.1",
     "glob": "^5.0.12",
+    "htmlparser2": "^3.8.3",
     "jsonwebtoken": "^5.0.2",
     "lodash": "^3.9.3",
     "lowdb": "^0.10.1",
     "method-override": "^2.3.3",
+    "moment": "^2.10.3",
     "morgan": "^1.6.0",
+    "q": "^1.4.1",
+    "queryAdapter": "^0.3.22",
     "swig": "^1.4.2",
     "underscore-db": "^0.9.0",
     "view-helpers": "^0.1.5"

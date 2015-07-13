@@ -19,6 +19,7 @@
                         self.isGuest = true;
                         self.isUser = false;
                         self.isAdmin = false;
+                        self.expires = 0;
                     }
 
                     function data() {
@@ -44,6 +45,8 @@
                         self.isUser = userProfile.roles.indexOf('user') !== -1;
                         self.isAdmin = userProfile.roles.indexOf('admin') !== -1;
 
+                        self.expires = userProfile.exp;
+
                         $rootScope.$emit('identity-updated', data());
                     };
 
@@ -51,6 +54,14 @@
                         reset();
                         $rootScope.$emit('identity-updated', data());
                         $rootScope.$emit('identity-destroyed');
+                    };
+
+                    this.isValid = function() {
+                        return self.expires != 0 && Math.floor(Date.now() / 1000) <= self.expires;
+                    };
+
+                    this.isExpired = function() {
+                        return self.expires != 0 && Math.floor(Date.now() / 1000) > self.expires;
                     };
                 }
 

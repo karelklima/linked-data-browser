@@ -5,7 +5,6 @@ var config = require('./index');
 var compression = require('compression');
 var morgan = require('morgan');
 var consolidate = require('consolidate');
-var express = require('express');
 var helpers = require('view-helpers');
 var flash = require('connect-flash');
 var modRewrite = require('connect-modrewrite');
@@ -13,6 +12,10 @@ var modRewrite = require('connect-modrewrite');
 module.exports = function(app) {
 
     app.set('showStackError', true);
+
+    if (config.env == 'development') {
+        app.set('json spaces', 4);
+    }
 
     // Prettify HTML
     app.locals.pretty = true;

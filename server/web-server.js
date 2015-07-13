@@ -1,6 +1,11 @@
 var http = require('http');
 var fs = require('fs');
 
+// Allow require of .sparql text files containing SPARQL queries
+require.extensions['.sparql'] = function (module, filename) {
+    module.exports = fs.readFileSync(filename, 'utf8');
+};
+
 var express = require('express');
 var cookieParser = require('cookie-parser');
 var expressValidator = require('express-validator');
@@ -14,9 +19,12 @@ var config = require('../config');
 var expressConfig = require('../config/express');
 var authorization = require('./lib/authorization');
 
-var assetsRouter = require('./routes/assets-routes');
-var usersRouter = require('./routes/users-routes');
-var indexRouter = require('./routes/index-routes');
+var assetsRoutes = require('./routes/assets-routes');
+var usersRoutes = require('./routes/users-routes');
+var endpointRoutes = require('./routes/endpoints-routes');
+var describeRoutes = require('./routes/describe-routes');
+var searchRoutes = require('./routes/search-routes');
+var indexRoutes = require('./routes/index-routes');
 
 var app = express();
 
@@ -43,12 +51,18 @@ app.use('/api', expressJwt({
 
 expressConfig(app);
 
-assetsRouter(app);
+assetsRoutes(app);
 
-usersRouter(app, authorization);
+usersRoutes(app, authorization);
+
+endpointRoutes(app, authorization);
+
+describeRoutes(app, authorization);
+
+searchRoutes(app,  authorization);
 
 // Setup index
-indexRouter(app);
+indexRoutes(app);
 
 // Internal server error or 404
 app.use(function (err, req, res, next) {

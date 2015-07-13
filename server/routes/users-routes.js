@@ -1,12 +1,10 @@
 'use strict';
 
-var jwt = require('jsonwebtoken');
-
 var config = require('../../config');
 
 var usersController = require('../controllers/users-controller');
 
-module.exports = function(app, auth, passport) {
+module.exports = function(app, auth) {
 
     // Setting up the users api
     app.route('/api/register')
@@ -22,6 +20,7 @@ module.exports = function(app, auth, passport) {
 
     app.route('/api/users')
         .get(usersController.getAllUsers)
+        .put(usersController.update)
         .delete(usersController.remove);
 
 };

@@ -1,0 +1,7 @@
+CONSTRUCT {
+    ?object rdfs:label ?label .
+}
+WHERE {
+    VALUES ?object { {{ requested-labels | escape-uri-list }} }
+    OPTIONAL { ?object rdfs:label ?label . }
+}

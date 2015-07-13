@@ -1,0 +1,37 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX frbr: <http://purl.org/vocab/frbr/core#>
+PREFIX my: <http://my/>
+
+PREFIX resource: {{ resource }}
+
+CONSTRUCT {
+    resource: my:out my:outcontainer .
+    resource: a ?resourceType .
+    my:outcontainer ?outPredicate ?outObject .
+    ?outObject a ?outObjectType .
+    #resource: my:labels ?outPredicate , ?outObjectType , ?resourceType.
+    #?outPredicate my:label ?outPredicateLabel .
+    #?outObjectType my:label ?outObjectTypeLabel .
+    #?resourceType my:label ?resourceTypeLabel .
+    ?outObject a ?outObjectType ;
+            ?outSecondaryPredicate ?outSecondaryObject .
+
+}
+
+WHERE {
+    resource: a ?resourceType .
+    # OPTIONAL { ?resourceType rdfs:label ?resourceTypeLabel }
+    OPTIONAL {
+        {{ outselects | no-escape }}
+        OPTIONAL {
+            ?outObject a ?outObjectType  .
+            # OPTIONAL { ?outObjectType rdfs:label ?outObjectTypeLabel } .
+        }
+        #OPTIONAL { ?outPredicate rdfs:label ?outPredicateLabel } .
+        OPTIONAL {
+            VALUES ?outSecondaryPredicate { {{ secondaryproperties | escape-uri-list }} }
+            OPTIONAL { ?outObject ?outSecondaryPredicate ?outSecondaryObject } .
+        }
+    }
+}
+

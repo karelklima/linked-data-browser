@@ -1,0 +1,14 @@
+PREFIX my: <http://my/>
+PREFIX res: {{ resource }}
+
+CONSTRUCT {
+    res: a ?type .
+    res: my:out ?out .
+    res: my:in ?in
+}
+
+WHERE {
+    OPTIONAL { res: a ?type }
+    OPTIONAL { res: ?out [] . FILTER(?out NOT IN (rdf:type)) }
+    OPTIONAL { [] ?in res: }
+}

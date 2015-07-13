@@ -4,9 +4,27 @@
 
     angular.module('app.services', []);
 
-    angular.module('app', ['app.controllers', 'app.services', 'ui.router', 'ui.bootstrap',
-        'ngMdIcons', 'angular-jwt', 'angular-storage', 'ngCookies', 'ngAnimate', 'ngLodash',
-        'angular-loading-bar', 'toastr'])
+    angular.module('app.filters', []);
+
+    angular.module('app.directives', []);
+
+    angular.module('app', [
+        'app.controllers',
+        'app.services',
+        'app.filters',
+        'app.directives',
+        'ui.router',
+        'ui.bootstrap',
+        'ngMdIcons',
+        'angular-jwt',
+        'angular-storage',
+        'ngCookies',
+        'ngAnimate',
+        'ngLodash',
+        'angular-loading-bar',
+        'toastr',
+        'smart-table'
+    ])
 
         .run(['$rootScope', '$state', '$stateParams', function ($rootScope, $state, $stateParams) {
             //$rootScope.$state = $state;
@@ -140,13 +158,29 @@
             });
         }])
 
-        .run(['$rootScope', '$state', 'store', 'jwtHelper', function($rootScope, $state, store, jwtHelper) {
+        .run(['$rootScope', '$state', 'Identity', function($rootScope, $state, Identity) {
             $rootScope.$on('$stateChangeStart', function(e, to) {
-                if (to.data && to.data.requiresLogin) {
-                    if (!store.get('jwt') || jwtHelper.isTokenExpired(store.get('jwt'))) {
-                        e.preventDefault();
-                        $state.go('root.login');
-                    }
+                // Destroy identity if current authentication token is expired
+                if (Identity.isExpired()) {
+                    Identity.destroy();
+                }
+                if (to.data && to.data.requiresLogin && !Identity.isUser) {
+                    e.preventDefault();
+                    $rootScope.$emit('toast', {
+                        type: "error",
+                        message: "User login required"
+                    });
+                    Identity.destroy();
+                    $state.go('root.login');
+                }
+
+                if (to.data && to.data.requiresAdmin && !Identity.isAdmin) {
+                    e.preventDefault();
+                    $rootScope.$emit('toast', {
+                        type: "error",
+                        message: "Admin privileges required"
+                    });
+                    $state.go('root.login');
                 }
             });
         }])

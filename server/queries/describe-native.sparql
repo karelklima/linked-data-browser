@@ -1,0 +1,5 @@
+DEFINE sql:describe-mode "CBD"
+
+PREFIX resource: {{ resource }}
+
+DESCRIBE resource:

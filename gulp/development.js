@@ -11,7 +11,7 @@ gulp.task('env:development', function () {
 
 gulp.task('serve:development', ['env:development'], function () {
   plugins.nodemon({
-    script: 'linked-data-browser.js',
+    script: 'bootstrap.js',
     ext: 'html js',
     env: { 'NODE_ENV': 'development' } ,
     ignore: ['node_modules/'],

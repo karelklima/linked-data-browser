@@ -6,7 +6,7 @@
             function($scope, $rootScope, $state, Identity, store) {
                 var self = this;
 
-
+                $scope.state = $state;
 
             }
         ]);

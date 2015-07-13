@@ -1,0 +1,19 @@
+PREFIX my: <http://my/>
+
+CONSTRUCT {
+    my:in {{ property }} ?object .
+    ?object ?property ?value .
+}
+
+WHERE {
+    {
+        SELECT ?object
+        WHERE { ?object {{ property }} {{ resource }} . }
+        LIMIT {{ limit | default:10 }}
+        OFFSET {{ offset | default:0 }}
+    }
+    OPTIONAL {
+        VALUES ?property { {{ requested-properties | escape-uri-list }} } .
+        ?object ?property ?value .
+    }
+}

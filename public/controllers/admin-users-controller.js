@@ -2,37 +2,41 @@
 
     angular.module('app.controllers')
 
-        .controller('AdminUsersController', ['$scope', '$rootScope', '$http', 'User', 'lodash', 'toastr',
-            function($scope, $rootScope, $http, User, _, toastr) {
-                var self = this;
-
-                $scope.numberOfAdmins = 0;
+        .controller('AdminUsersController', ['$scope', '$rootScope', '$http', 'User', 'lodash',
+            function($scope, $rootScope, $http, User, _) {
 
                 User.getAll().then(function(users) {
-                    $scope.numberOfAdmins = _(users).filter(function(o) {
-                        return o.roles.indexOf('admin') >= 0;
-                    }).size();
-                    $scope.users = _(users).map(function(user) {
-                        user.isAdmin = user.roles.indexOf('admin') >= 0;
-                        user.roles = user.roles.replace(' ', ', ');
+                    users = _.map(users, function(user) {
+                        user.isAdmin = user.roles.indexOf('admin') != -1;
                         return user;
-                    }).value();
+                    });
+                    $scope.users = users;
+                    $scope.displayedUsers = users;
                 });
 
                 $scope.makeAdmin = function(user) {
 
-                    toastr.info("Clicked makeAdmin");
-
-                    var u = user;
-
-                    return false;
+                    User.update({
+                        id: user.id,
+                        roles: "user admin"
+                    })
+                        .then(function() {
+                            user.roles = "user admin";
+                            user.isAdmin = true;
+                        });
 
                 };
 
                 $scope.revokeAdmin = function(user) {
 
-                    var e = event;
-                    var u = user;
+                    User.update({
+                        id: user.id,
+                        roles: "user"
+                    })
+                        .then(function() {
+                            user.roles = "user";
+                            user.isAdmin = false;
+                        });
                 };
 
                 $scope.remove = function(user) {

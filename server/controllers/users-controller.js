@@ -143,6 +143,11 @@ exports.remove = function(req, res) {
         return res.status(400).json(toaster.toJSON());
     }
 
+    if (req.query.id == req.user.id) {
+        toaster.error('You cannot remove your account');
+        return res.status(400).json(toaster.toJSON());
+    }
+
     var userData = users.findById(req.query.id);
     if (!userData) {
         toaster.error('User with given ID not found');
@@ -153,4 +158,40 @@ exports.remove = function(req, res) {
     toaster.success('User was successfully removed');
 
     return res.status(200).json(toaster.toJSON());
+};
+
+/**
+ * Updates a user
+ */
+exports.update = function(req, res) {
+
+    req.checkBody('id', 'User ID not provided');
+    var toaster = new Toaster();
+
+    toaster.importValidationErrors(req.validationErrors());
+    if (toaster.size() > 0) {
+        return res.status(400).json(toaster.toJSON());
+    }
+
+    var params = req.body.params;
+
+    var userData = users.findById(params.id);
+    if (!userData) {
+        toaster.error('User with given ID not found');
+        return res.status(400).json(toaster.toJSON());
+    }
+
+    if (params.id == req.user.id && params.roles && params.roles.indexOf('admin') < 0) {
+        toaster.error('You cannot revoke your admin privileges');
+        return res.status(400).json(toaster.toJSON());
+    }
+
+    var id = params.id;
+    var data = _.clone(params);
+    delete data.id;
+    users.updateById(id, data);
+    toaster.success('User was successfully updated');
+
+    return res.status(200).json(toaster.toJSON());
+
 };

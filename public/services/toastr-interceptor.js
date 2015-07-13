@@ -4,7 +4,7 @@
 
     angular.module('app.services')
 
-        .service('ToastrInterceptor', ['$rootScope', 'lodash', function ($rootScope, _) {
+        .service('ToastrInterceptor', ['$rootScope', '$q', 'lodash', function ($rootScope, $q, _) {
 
             function processToasts(response) {
                 if (_.isObject(response.data) && _.isArray(response.data.toasts)) {
@@ -18,7 +18,9 @@
 
             this.response = processToasts;
 
-            this.responseError = processToasts;
+            this.responseError = function(response) {
+                return $q.reject(processToasts(response));
+            };
 
         }]);
 
