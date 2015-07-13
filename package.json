@@ -47,7 +47,6 @@
     "moment": "^2.10.3",
     "morgan": "^1.6.0",
     "q": "^1.4.1",
-    "queryAdapter": "^0.3.22",
     "swig": "^1.4.2",
     "underscore-db": "^0.9.0",
     "view-helpers": "^0.1.5"
