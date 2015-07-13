@@ -40,6 +40,7 @@
     "express-validator": "^2.12.1",
     "glob": "^5.0.12",
     "htmlparser2": "^3.8.3",
+    "jsonld": "^0.3.22",
     "jsonwebtoken": "^5.0.2",
     "lodash": "^3.9.3",
     "lowdb": "^0.10.1",
