@@ -275,9 +275,13 @@ function SparqlQueryAdapter() {
                         if (predicate == '@id') {
                             newObj['@id'] = replacer.contract(values);
                         } else if (predicate == '@type') {
-                            newObj['@type'] = _.map(values, function(value) {
-                                return replacer.contract(value);
-                            });
+                            if (_.isArray(values)) {
+                                newObj['@type'] = _.map(values, function (value) {
+                                    return replacer.contract(value);
+                                });
+                            } else {
+                                newObj['@type'] = [ replacer.contract(values) ];
+                            }
                         } else {
                             if (!_.startsWith(predicate, '@')) {
                                 predicate = replacer.contract(predicate);
