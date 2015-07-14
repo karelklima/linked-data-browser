@@ -38,7 +38,7 @@
                 },
                 transclude: true,
                 replace: true,
-                template: '<span ng-repeat="resource in describeList"><a resource="{{ resource }}">{{ resource }}</a>{{$last ? "" : ", "}}</span>'
+                template: '<span ng-repeat="resource in describeList"><a describe resource="{{ resource }}">{{ resource }}</a>{{$last ? "" : ", "}}</span>'
             };
         })
 

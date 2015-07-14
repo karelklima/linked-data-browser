@@ -23,9 +23,9 @@ module.exports = {
     },
 
     defaultEndpoint: {
-        name: 'DBpedia',
-        alias: 'dbpedia',
-        url: 'http://dbpedia.org/sparql'
+        name: 'Opendata.cz',
+        alias: 'opendata',
+        url: 'http://linked.opendata.cz/sparql'
     },
 
     defaultLanguage: {
