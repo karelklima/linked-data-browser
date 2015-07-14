@@ -1,4 +1,4 @@
-<div class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController as header">
+<div class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
     <div class="container">
         <div class="navbar-header">
             <a ui-sref="root.home" class="navbar-brand">LinkedData Explorer</a>
@@ -9,30 +9,28 @@
             </button>
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse" collapse="navCollapsed">
-            <form class="navbar-form navbar-left" role="search" ng-submit="header.search()">
-                <input type="text" class="form-control input-search" placeholder="SEARCH OR URI">
-                <select class="form-control select-endpoint">
-                    <option>DBPedia</option>
-                    <option>Opendata</option>
-                </select>
-                <select class="form-control select-language">
-                    <option>EN</option>
-                    <option>CS</option>
-                </select>
+            <form class="navbar-form navbar-left" role="search" ng-submit="search()">
+                <input type="text" class="form-control input-search" ng-model="query" placeholder="SEARCH OR URI" required>
+                <select class="form-control select-endpoint" ng-model="endpoint"
+                        ng-options="ep.name for ep in options.endpoints | orderBy:'name'"
+                        ng-change="updateEndpoint()"></select>
+                <select class="form-control select-language" ng-model="language"
+                        ng-options="lg.label for lg in options.languages | orderBy:'label'"
+                        ng-change="updateLanguage()"></select>
             </form>
 
             <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown" ng-show="header.identity.isUser" dropdown>
-                    <a href role="button" class="dropdown-toggle" dropdown-toggle>{{ header.identity.profile.email }} <span class="caret"></span></a>
+                <li class="dropdown" ng-show="identity.isUser" dropdown>
+                    <a href role="button" class="dropdown-toggle" dropdown-toggle>{{ identity.profile.email }} <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
                         <li><a ui-sref="root.profile">Profile</a></li>
-                        <li ng-show="header.identity.isAdmin"><a ui-sref="root.admin.users">Administration</a></li>
+                        <li ng-show="identity.isAdmin"><a ui-sref="root.admin.users">Administration</a></li>
                         <li class="divider"></li>
-                        <li><a ng-click="header.logout()">Logout</a></li>
+                        <li><a ng-click="logout()">Logout</a></li>
                     </ul>
                 </li>
-                <li ng-show="header.identity.isGuest"><a ui-sref="root.login">LOGIN</a></li>
-                <li ng-show="header.identity.isGuest"><a ui-sref="root.register">REGISTER</a></li>
+                <li ng-show="identity.isGuest"><a ui-sref="root.login">LOGIN</a></li>
+                <li ng-show="identity.isGuest"><a ui-sref="root.register">REGISTER</a></li>
             </ul>
 
         </div>

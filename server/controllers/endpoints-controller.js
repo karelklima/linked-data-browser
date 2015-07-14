@@ -44,7 +44,7 @@ exports.create = function(req, res) {
         return res.status(400).json(toastr.toJSON());
     }
 
-    var endpointProfile = endpoints.createEndpoint(req.body.name, req.body.alias, req.body.url);
+    var endpointProfile = endpoints.createLanguage(req.body.name, req.body.alias, req.body.url);
     toastr.success("Endpoint created successfully");
     return res.status(201).send({
         toasts: toastr.getToasts(),
@@ -108,7 +108,7 @@ exports.update = function(req, res) {
         return res.status(400).json(toaster.toJSON());
     }
 
-    var params = req.body.params;
+    var params = req.body;
 
     var endpointData = endpoints.findById(params.id);
     if (!endpointData) {

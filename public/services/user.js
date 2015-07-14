@@ -11,22 +11,20 @@
                     var deferred = $q.defer();
                     $http.post('/api/login', userData)
                         .success(function(data) {
-                            store.set('jwt', data.token);
-                            Identity.update(jwtHelper.decodeToken(data.token));
-                            $rootScope.$emit('login-completed');
+                            Identity.set(data.token);
+                            $rootScope.$broadcast('login-completed');
                             deferred.resolve();
                         }).error(function(error) {
-                            $rootScope.$emit('login-failed');
+                            $rootScope.$broadcast('login-failed');
                             deferred.reject();
                         });
                     return deferred.promise;
                 };
 
                 this.logout = function(){
-                    store.remove('jwt');
                     Identity.destroy();
 
-                    $rootScope.$emit('logout-completed');
+                    $rootScope.$broadcast('logout-completed');
                     $rootScope.$emit('toast', {
                         type: 'success',
                         message: 'Logout successful'
@@ -41,13 +39,12 @@
                     var deferred = $q.defer();
                     $http.post('/api/register', userData)
                         .success(function(data) {
-                            store.set('jwt', data.token);
-                            Identity.update(jwtHelper.decodeToken(data.token));
-                            $rootScope.$emit('registration-completed');
+                            Identity.set(data.token);
+                            $rootScope.$broadcast('registration-completed');
                             deferred.resolve();
                         })
                         .error(function() {
-                            $rootScope.$emit('registration-failed');
+                            $rootScope.$broadcast('registration-failed');
                             deferred.reject();
                         });
 
@@ -58,11 +55,11 @@
                     var deferred = $q.defer();
                     $http.delete('/api/users', { params: userData })
                         .success(function(data, a, b, c) {
-                            $rootScope.$emit('user-removed', userData);
+                            $rootScope.$broadcast('user-removed', userData);
                             deferred.resolve();
                         })
                         .error(function() {
-                            $rootScope.$emit('user-removal-failed', userData);
+                            $rootScope.$broadcast('user-removal-failed', userData);
                             deferred.reject();
                         });
 
@@ -73,11 +70,11 @@
                     var deferred = $q.defer();
                     $http.put('/api/users', { params: userData })
                         .success(function(data) {
-                            $rootScope.$emit('user-updated', userData);
+                            $rootScope.$broadcast('user-updated', userData);
                             deferred.resolve();
                         })
                         .error(function() {
-                            $rootScope.$emit('user-update-failed', userData);
+                            $rootScope.$broadcast('user-update-failed', userData);
                             deferred.reject();
                         });
 

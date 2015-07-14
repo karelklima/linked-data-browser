@@ -28,6 +28,11 @@ module.exports = {
         url: 'http://dbpedia.org/sparql'
     },
 
+    defaultLanguage: {
+        label: 'EN',
+        alias: 'en'
+    },
+
     endpointParams: {
         format: "application/ld+json",
         timeout: "10000"
@@ -44,6 +49,16 @@ module.exports = {
             "http://schema.org/name"
         ],
         sampleCount: 5
+    },
+
+    searchQuery: {
+        labels: [
+            "rdfs:label",
+            "foaf:name",
+            "dcterms:title",
+            "skos:prefLabel",
+            "http://schema.org/name"
+        ]
     },
 
     queryAdapter: {

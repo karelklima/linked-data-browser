@@ -4,53 +4,53 @@
 
     angular.module('app.services')
 
-        .service('Endpoint', ['$rootScope', '$http', '$state', '$q',
+        .service('Language', ['$rootScope', '$http', '$state', '$q',
             function($rootScope, $http, $state, $q) {
 
                 /**
-                 * Creates a new SPARQL endpoint
-                 * @param endpointData
+                 * Creates a new language
+                 * @param languageData
                  * @returns {IPromise<T>}
                  */
-                this.create = function(endpointData) {
+                this.create = function(languageData) {
                     var deferred = $q.defer();
-                    $http.post('/api/endpoints', endpointData)
+                    $http.post('/api/languages', languageData)
                         .success(function(data) {
-                            $rootScope.$broadcast('endpoint-created');
+                            $rootScope.$emit('language-created');
                             deferred.resolve(data);
                         })
                         .error(function() {
-                            $rootScope.$broadcast('endpoint-creation-failed');
+                            $rootScope.$emit('language-creation-failed');
                             deferred.reject();
                         });
 
                     return deferred.promise;
                 };
 
-                this.remove = function(endpointData) {
+                this.remove = function(languageData) {
                     var deferred = $q.defer();
-                    $http.delete('/api/endpoints', { params: endpointData })
+                    $http.delete('/api/languages', { params: languageData })
                         .success(function(data) {
-                            $rootScope.$broadcast('endpoint-removed', endpointData);
+                            $rootScope.$emit('language-removed', languageData);
                             deferred.resolve();
                         })
                         .error(function() {
-                            $rootScope.$broadcast('endpoint-removal-failed', endpointData);
+                            $rootScope.$emit('language-removal-failed', languageData);
                             deferred.reject();
                         });
 
                     return deferred.promise;
                 };
 
-                this.update = function(endpointData) {
+                this.update = function(languageData) {
                     var deferred = $q.defer();
-                    $http.put('/api/endpoints', endpointData)
+                    $http.put('/api/languages', languageData)
                         .success(function(data) {
-                            $rootScope.$broadcast('endpoint-updated', endpointData);
+                            $rootScope.$emit('language-updated', languageData);
                             deferred.resolve();
                         })
                         .error(function() {
-                            $rootScope.$broadcast('endpoint-update-failed', endpointData);
+                            $rootScope.$emit('language-update-failed', languageData);
                             deferred.reject();
                         });
 
@@ -59,7 +59,7 @@
 
                 this.getAll = function() {
                     var deferred = $q.defer();
-                    $http.get('/api/endpoints')
+                    $http.get('/api/languages')
                         .success(function(data) {
                             deferred.resolve(data);
                         })

@@ -2,8 +2,8 @@
 
     angular.module('app.controllers')
 
-        .controller('AdminUsersController', ['$scope', '$rootScope', '$http', 'User', 'lodash',
-            function($scope, $rootScope, $http, User, _) {
+        .controller('AdminUsersController', ['$scope', '$http', 'User', 'lodash',
+            function($scope, $http, User, _) {
 
                 User.getAll().then(function(users) {
                     users = _.map(users, function(user) {

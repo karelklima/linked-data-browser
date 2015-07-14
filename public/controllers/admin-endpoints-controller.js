@@ -2,8 +2,8 @@
 
     angular.module('app.controllers')
 
-        .controller('AdminEndpointsController', ['$scope', '$rootScope', '$http', 'Endpoint', 'lodash',
-            function($scope, $rootScope, $http, Endpoint, _) {
+        .controller('AdminEndpointsController', ['$scope', '$http', 'Endpoint', 'lodash', 'Config',
+            function($scope, $http, Endpoint, _, Config) {
 
                 $scope.endpointForm = {};
                 $scope.endpoints = null;
@@ -23,6 +23,7 @@
                         .then(function(data) {
                             $scope.endpoints.push(data.endpoint);
                             $scope.endpointForm = {}; // clear form model
+                            Config.reload(); // update environment
                         })
 
 
@@ -39,6 +40,7 @@
                                ep.default = false;
                             });
                             endpoint.default = true;
+                            Config.reload(); // update environment
                         });
 
                 };
@@ -49,6 +51,7 @@
                     })
                         .then(function() {
                             _.remove($scope.endpoints, {id: endpoint.id});
+                            Config.reload(); // update environment
                         });
                 }
 

@@ -19,6 +19,7 @@ function SparqlQueryRenderer(sparqlQueryText)
     var filters = {
         "escape-uri": filterEscapeUri,
         "escape-uri-list": filterEscapeUriList,
+        "escape-single-quotes": filterEscapeSingleQuotes,
         "escape-double-quotes": filterEscapeDoubleQuotes,
         "no-escape": filterNoEscape
     };
@@ -50,6 +51,15 @@ function SparqlQueryRenderer(sparqlQueryText)
         definitions.push(definition);
         return "{{" + (definitions.length - 1) + "}}";
     });
+
+    /**
+     * Replace "'" with "\'" in input string
+     * @param string
+     * @returns {string}
+     */
+    function filterEscapeSingleQuotes(string) {
+        return string.replace(/'/g, "\\'");
+    }
 
     /**
      * Replace '"' with '\"' in input string
@@ -118,16 +128,16 @@ function SparqlQueryRenderer(sparqlQueryText)
 
             var output = null;
 
-            if (params[definition.param]) {
+            if (_.has(params, definition.param)) {
                 output = params[definition.param];
                 if (definition.filter && filters[definition.filter]) {
                     output = filters[definition.filter](output);
                 }
-            } else if (definition.default) {
+            } else if (definition.default !== null) {
                 output = definition.default;
             }
 
-            if (!output)
+            if (output === null)
                 throw Error("SparqlQueryRenderer: parameter missing - " + definition.param);
 
             return output;

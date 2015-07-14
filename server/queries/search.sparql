@@ -1,1 +1,31 @@
-invalid query string
+PREFIX my: <http://>
+
+CONSTRUCT{
+  ?resource rdf:type ?type ;
+    my:text ?text ;
+    my:label ?label ;
+    my:graph ?graph ;
+    my:score ?sc .
+}
+
+WHERE {
+  SELECT DISTINCT ?resource ?type ?text ?label ?sc ?graph
+  {{ from | no-escape }}
+  WHERE {
+    GRAPH ?graph {
+        {{ valuesType | no-escape }}
+    	?resource a ?type .
+    	{{ valuesProperty | no-escape }}
+    	?resource ?property ?text .
+    	?text bif:contains '{{ query | escape-single-quotes}}'
+    	OPTION (SCORE ?sc) .
+    	OPTIONAL {
+    	    VALUES ?labelProperty { {{ labels | escape-uri-list }} }
+    	    ?resource ?labelProperty ?label
+    	}
+    }
+  }
+  ORDER BY DESC( ?sc)
+  LIMIT {{ limit | default:10 }}
+  OFFSET {{ offset | default:0 }}
+}

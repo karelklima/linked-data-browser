@@ -4,64 +4,101 @@
 
     angular.module('app.services')
 
-        .factory('Identity', ['$rootScope', '$http', '$state', 'store',
-            function ($rootScope, $http, $state, store) {
+        .factory('Identity', ['$rootScope', '$http', '$state', 'store', 'jwtHelper',
+            function ($rootScope, $http, $state, store, jwtHelper) {
 
                 function Identity() {
 
                     var self = this;
-                    reset();
-                    // initial update notification
-                    $rootScope.$emit('identity-updated', data());
+                    var profile = {};
+
+                    verifyToken();
+                    var token = getToken();
+                    if (token) { // initial load of identity
+                        load(token);
+                    } else {
+                        reset();
+                    }
+
+                    function verifyToken() {
+                        var token = getToken();
+                        if (token && !checkTokenValid(token)) {
+                            destroyToken();
+                            reset();
+                        }
+                    }
+
+                    function getToken() {
+                        return store.get('jwt') ? store.get('jwt') : false;
+                    }
+
+                    function setToken(token) {
+                        store.set('jwt', token);
+                    }
+
+                    function decodeToken(token) {
+                        return jwtHelper.decodeToken(token)
+                    }
+
+                    function checkTokenValid(token) {
+                        var data = decodeToken(token);
+                        return Math.floor(Date.now() / 1000) < data.exp;
+                    }
+
+                    function destroyToken() {
+                        store.remove('jwt');
+                    }
 
                     function reset() {
-                        self.profile = {};
-                        self.isGuest = true;
-                        self.isUser = false;
-                        self.isAdmin = false;
-                        self.expires = 0;
+                        profile = {};
                     }
 
                     function data() {
                         return {
-                            profile: self.profile,
-                            isGuest: self.isGuest,
-                            isUser: self.isUser,
-                            isAdmin: self.isAdmin
+                            profile: profile,
+                            isGuest: self.isGuest(),
+                            isUser: self.isUser(),
+                            isAdmin: self.isAdmin()
                         }
+                    }
+
+                    function load (token) {
+                        var userProfile = jwtHelper.decodeToken(token);
+                        profile = {
+                            email: userProfile.email,
+                            id: userProfile.id,
+                            roles: userProfile.roles
+                        };
                     }
 
                     this.getData = function() {
                         return data();
                     };
 
-                    this.update = function(userProfile) {
-                        self.profile = {
-                            email: userProfile.email,
-                            id: userProfile.id,
-                            roles: userProfile.roles
-                        };
-                        self.isGuest = false;
-                        self.isUser = userProfile.roles.indexOf('user') !== -1;
-                        self.isAdmin = userProfile.roles.indexOf('admin') !== -1;
-
-                        self.expires = userProfile.exp;
-
-                        $rootScope.$emit('identity-updated', data());
+                    this.set = function(token) {
+                        setToken(token);
+                        load(token);
+                        $rootScope.$broadcast('identity-set', data());
                     };
 
                     this.destroy = function() {
                         reset();
-                        $rootScope.$emit('identity-updated', data());
-                        $rootScope.$emit('identity-destroyed');
+                        destroyToken();
+                        $rootScope.$broadcast('identity-destroyed');
                     };
 
-                    this.isValid = function() {
-                        return self.expires != 0 && Math.floor(Date.now() / 1000) <= self.expires;
+                    this.isGuest = function() {
+                        return !this.isUser();
                     };
 
-                    this.isExpired = function() {
-                        return self.expires != 0 && Math.floor(Date.now() / 1000) > self.expires;
+                    this.isUser = function() {
+                        verifyToken();
+                        return profile.roles ? profile.roles.indexOf('user') !== -1 : false;
+                    };
+
+                    this.isAdmin = function() {
+                        verifyToken();
+                        return profile.roles ? profile.roles.indexOf('admin') !== -1 : false;
                     };
                 }
 

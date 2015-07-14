@@ -17,7 +17,7 @@
                     })
                         .then(function() {
                             self.loginError = null;
-                            $state.go('root.home');
+                            $state.go('root.home', {}, { reload: true });
                         });
                 };
 

@@ -20,8 +20,10 @@ var expressConfig = require('../config/express');
 var authorization = require('./lib/authorization');
 
 var assetsRoutes = require('./routes/assets-routes');
+var configRoutes = require('./routes/config-routes');
 var usersRoutes = require('./routes/users-routes');
-var endpointRoutes = require('./routes/endpoints-routes');
+var endpointsRoutes = require('./routes/endpoints-routes');
+var languagesRoutes = require('./routes/languages-routes');
 var describeRoutes = require('./routes/describe-routes');
 var searchRoutes = require('./routes/search-routes');
 var indexRoutes = require('./routes/index-routes');
@@ -53,9 +55,13 @@ expressConfig(app);
 
 assetsRoutes(app);
 
+configRoutes(app, authorization);
+
 usersRoutes(app, authorization);
 
-endpointRoutes(app, authorization);
+endpointsRoutes(app, authorization);
+
+languagesRoutes(app, authorization);
 
 describeRoutes(app, authorization);
 

@@ -1,0 +1,50 @@
+<div ng-controller="SearchController">
+
+    <hr class="spacer-20"/>
+
+    <p class="text-center">Searching <b><a describe="endpoint.url">{{ endpoint.name }}</a></b> for <b>{{ query.query }}</b>
+        in <b ng-if="query.types.length < 1">all types</b>
+        <span ng-if="query.types.length > 0">types
+            <span ng-repeat="type in query.types"><b><a describe="type">{{ type }}</a></b>{{$last ? '' : ', '}}</span>
+        </span>
+        and <b ng-if="query.properties.length < 1">all properties</b>
+        <span ng-if="query.properties.length > 0">properties
+            <span ng-repeat="property in query.properties"><b><a describe="property">{{ property }}</a></b>{{$last ? '' : ', '}}</span>
+        </span>
+        using <b ng-if="query.graphs.length < 1">all graphs</b>
+        <span ng-if="query.graphs.length > 0">graphs
+            <span ng-repeat="graph in query.graphs"><b><a describe="graph">{{ graph }}</a></b>{{$last ? '' : ', '}}</span>
+        </span>
+    </p>
+
+    <hr class="spacer-20"/>
+
+    <table class="table" ng-hide="isEmpty()">
+        <tr>
+            <th nowrap>Entity</th>
+            <th>Text</th>
+            <th>Graph</th>
+        </tr>
+        <tr ng-repeat="result in results">
+            <td nowrap>
+                <a describe resource="{{ result['@id'] }}">{{ result['@id'] | truncateUri }}</a><br/>
+                <small class="text-muted" describe-list="result['@type']"></small>
+            </td>
+            <td><div print-values="result.text"></div></td>
+            <td><div print-ids="result.graph"></div></td>
+        </tr>
+    </table>
+
+    <div class="alert alert-warning" ng-show="datasource.isEmpty">
+        There are not any data matching the search criteria.
+    </div>
+
+    <hr ng-show="datasource.isLoading" class="spacer-20"/>
+    <div ng-show="datasource.isLoading" class="text-center"><b>Loading...</b></div>
+    <hr ng-show="datasource.isLoading" class="spacer-20"/>
+
+    <div datapager source="datasource" target="results" items-per-page="30"></div>
+
+    <hr class="spacer-20"/>
+
+</div>

@@ -1,0 +1,58 @@
+<div ng-controller="AdminLanguagesController">
+
+    <hr class="spacer-20"/>
+
+    <table st-table="displayedLanguages" st-safe-src="languages" class="table table-striped table-hover" ng-cloak>
+        <thead>
+        <tr>
+            <th colspan="5"><input st-search class="form-control" placeholder="Search languages" type="text"/></th>
+        </tr>
+        <tr>
+            <th st-sort="name" st-sort-default="true">Label</th>
+            <th st-sort="alias">Alias</th>
+            <th st-sort="default">Default</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="language in displayedLanguages">
+            <td>{{ language.label }}</td>
+            <td>{{ language.alias }}</td>
+            <td>{{ language.default | boolean | uppercase }}</td>
+            <td class="text-right">
+                    <span ng-if="!language.default">
+                        <button class="btn btn-default btn-sm" ng-click="makeDefault(language)">Make default</button>
+                    </span>
+                <button class="btn btn-default btn-sm" ng-click="remove(language)">Delete</button>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5" class="text-center">
+                <div st-pagination st-items-by-page="10" st-displayed-pages="10"></div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+
+    <form class="well well-lg form-inline" ng-submit="create()">
+
+        <fieldset>
+            <legend>Create new language</legend>
+
+            <div class="form-group">
+                <label class="sr-only" for="languageLabel">Label</label>
+                <input required type="text" class="form-control" id="languageLabel" ng-model="languageForm.label" placeholder="Label">
+            </div>
+            <div class="form-group">
+                <label class="sr-only" for="languageAlias">Alias</label>
+                <input required type="text" class="form-control" id="languageAlias" ng-model="languageForm.alias" placeholder="Alias">
+            </div>
+            <button type="submit" class="btn btn-success">Create</button>
+
+        </fieldset>
+    </form>
+
+
+</div>

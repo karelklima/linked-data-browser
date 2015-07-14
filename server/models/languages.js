@@ -6,29 +6,28 @@ var underscoreDb = require('underscore-db');
 
 var config = require('../../config');
 
-function Endpoints() {
-    var usersDatabase = low(config.datastore + '/endpoints.json');
+function Languages() {
+    var usersDatabase = low(config.datastore + '/languages.json');
     usersDatabase._.mixin(underscoreDb);
-    var endpoints = usersDatabase('endpoints');
+    var languages = usersDatabase('languages');
 
-    if (endpoints.size() < 1) {
-        createDefaultEndpoint();
+    if (languages.size() < 1) {
+        createDefaultLanguage();
     }
 
-    function createDefaultEndpoint() {
-        var endpoint = config.defaultEndpoint;
-        endpoints.insert({
-            name: endpoint.name,
-            alias: endpoint.alias,
-            url: endpoint.url,
+    function createDefaultLanguage() {
+        var language = config.defaultLanguage;
+        languages.insert({
+            label: language.label,
+            alias: language.alias,
             default: true
         });
     }
 
     function findOne(spec) {
-        var endpoint = endpoints.find(spec);
-        if (_.isObject(endpoint)) {
-            return _.clone(endpoint);
+        var language = languages.find(spec);
+        if (_.isObject(language)) {
+            return _.clone(language);
         }
         return false;
     }
@@ -45,11 +44,10 @@ function Endpoints() {
         });
     };
 
-    this.createLanguage = function(name, alias, url) {
-        endpoints.insert({
-            name: name,
+    this.createLanguage = function(label, alias) {
+        languages.insert({
+            label: label,
             alias: alias,
-            url: url,
             default: false
         });
         return findOne({
@@ -58,7 +56,7 @@ function Endpoints() {
     };
 
     this.getAll = function() {
-        return endpoints.value();
+        return languages.value();
     };
 
     this.getDefault = function() {
@@ -68,14 +66,14 @@ function Endpoints() {
     };
 
     this.removeById = function(id) {
-        return endpoints.removeById(id);
+        return languages.removeById(id);
     };
 
     this.updateById = function(id, data) {
-        return endpoints.updateById(id, data);
+        return languages.updateById(id, data);
     };
 
 }
 
-var endpoints = new Endpoints();
-module.exports = endpoints;
+var languages = new Languages();
+module.exports = languages;
