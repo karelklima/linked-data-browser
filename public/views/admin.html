@@ -1,16 +1,18 @@
 <div ng-controller="AdminController">
 
-    <div class="tabs-fixed-container">
-        <tabset class="tabs-fixed container">
-            <tab heading="USERS" ui-sref="root.admin.users" ui-sref-active="root.admin.users"></tab>
-            <tab heading="ENDPOINTS" ui-sref="root.admin.endpoints" ui-sref-active="root.admin.endpoints"></tab>
-            <tab heading="LANGUAGES" ui-sref="root.admin.languages" ui-sref-active="root.admin.languages"></tab>
-            <tab heading="VIEWS" ui-sref="root.admin.views" ui-sref-active="root.admin.views"></tab>
-            <tab heading="MINIAPPS" ui-sref="root.admin.miniapps" ui-sref-active="root.admin.miniapps"></tab>
-        </tabset>
+    <div class="heading-fixed-container heading-admin">
+        <div class="container">
+            <ul class="nav nav-heading navbar-left"><li><div class="heading">ADMINISTRATION</div></li></ul>
+            <ul class="nav nav-tabs navbar-right">
+                <li ui-sref-active="active"><a ui-sref="root.admin.users">USERS</a></li>
+                <li ui-sref-active="active"><a ui-sref="root.admin.endpoints">ENDPOINTS</a></li>
+                <li ui-sref-active="active"><a ui-sref="root.admin.languages">LANGUAGES</a></li>
+                <li ui-sref-active="active"><a ui-sref="root.admin.views">VIEWS</a></li>
+            </ul>
+        </div>
     </div>
 
-    <hr class="tabs-fixed-clear"/>
+    <hr class="heading-fixed-clear"/>
 
     <ui-view></ui-view>
 

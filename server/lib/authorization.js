@@ -1,11 +1,13 @@
 'use strict';
 
+var ToasterError = require('./toaster-error');
+
 /**
  * Generic require login routing middleware
  */
 exports.requiresLogin = function(req, res, next) {
     if (!req.user) {
-        return res.status(401).send('User is not authorized');
+        throw new ToasterError('User is not authorized', 401);
     }
     next();
 };
@@ -16,7 +18,7 @@ exports.requiresLogin = function(req, res, next) {
  */
 exports.requiresAdmin = function(req, res, next) {
     if (!req.user || req.user.roles.indexOf('admin') < 0) {
-        return res.status(401).send('User is not authorized');
+        throw new ToasterError('User is not authorized', 401);
     }
     next();
 };

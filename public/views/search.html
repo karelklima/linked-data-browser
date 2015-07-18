@@ -35,13 +35,11 @@
         </tr>
     </table>
 
-    <div class="alert alert-warning" ng-show="datasource.isEmpty">
+    <div class="well well-lg text-center" ng-show="datasource.isEmpty">
         There are not any data matching the search criteria.
     </div>
 
-    <hr ng-show="datasource.isLoading" class="spacer-20"/>
-    <div ng-show="datasource.isLoading" class="text-center"><b>Loading...</b></div>
-    <hr ng-show="datasource.isLoading" class="spacer-20"/>
+    <loading-bar ng-show="datasource.isLoading"></loading-bar>
 
     <div datapager source="datasource" target="results" items-per-page="30"></div>
 

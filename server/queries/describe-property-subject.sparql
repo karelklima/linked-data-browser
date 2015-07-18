@@ -1,0 +1,31 @@
+PREFIX my: <http://my/>
+
+CONSTRUCT {
+    {{ property }} my:relation my:subject .
+    {{ property }} my:graph ?graph .
+    {{ property }} my:count ?count .
+    {{ property }} my:label ?label .
+    {{ property }} my:data ?object .
+    ?object ?property ?value .
+}
+
+WHERE {
+    {
+        SELECT ?object
+        WHERE { {{ resource }} {{ property }} ?object . }
+        LIMIT {{ limit | default:10 }}
+        OFFSET {{ offset | default:0 }}
+    }
+    {
+        SELECT (COUNT(?object) as ?count)
+        WHERE { {{ resource }} {{ property }} ?object . }
+    }
+    GRAPH ?graph { {{ resource }} {{ property }} ?object }
+    OPTIONAL {
+        VALUES ?property { {{ requested-properties | escape-uri-list }} } .
+        ?object ?property ?value .
+    }
+    OPTIONAL {
+        {{ property }} rdfs:label ?label .
+    }
+}

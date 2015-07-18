@@ -20,6 +20,14 @@
                         currentLanguage = language;
                     });
 
+                    $rootScope.$on('describe-endpoint-changed', function(e, endpoint) {
+                        currentEndpoint = endpoint;
+                    });
+
+                    $rootScope.$on('describe-language-changed', function(e, language) {
+                        currentLanguage = language;
+                    });
+
                     $rootScope.$on('header-endpoint-changed', function(e, endpoint) {
                         currentEndpoint = endpoint;
                     });

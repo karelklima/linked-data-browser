@@ -4,8 +4,12 @@ module.exports = {
 
     name: 'Single column',
 
-    template: 'single-column-layout.html',
+    displayTemplate: 'display.html',
 
-    blocks: ['main']
+    setupTemplate: 'display.html',
+
+    defaultPanel: 'main',
+
+    panels: ['main']
 
 };

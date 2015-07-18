@@ -31,7 +31,7 @@ function PrefixesManager () {
             });
         }).on('error', function(error) {
             console.log(error);
-            deferred.reject("Cannot retrieve endpoint namespace prefixes");
+            deferred.reject(new Error("Cannot retrieve endpoint namespace prefixes"));
         });
 
         return deferred.promise;
@@ -41,7 +41,7 @@ function PrefixesManager () {
         var deferred = Q.defer();
 
         if (!endpoint.alias) {
-            deferred.reject("Endpoint alias not provided");
+            deferred.reject(new Error("Endpoint alias not provided"));
         }
 
         var stored = prefixes.findByAlias(endpoint.alias);
@@ -52,7 +52,7 @@ function PrefixesManager () {
         else {
             // We need to contact the
             if (!endpoint.url) {
-                deferred.reject("Endpoint URL not provided")
+                deferred.reject(new Error("Endpoint URL not provided"));
             }
             else {
 
@@ -75,7 +75,7 @@ function PrefixesManager () {
         var deferred = Q.defer();
 
         if (!endpoint.alias) {
-            deferred.reject("Endpoint alias not provided");
+            deferred.reject(new Error("Endpoint alias not provided"));
         }
 
         if (replacers[endpoint.alias]) {

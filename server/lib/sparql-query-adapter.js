@@ -9,6 +9,7 @@ var moment = require('moment');
 
 var config = require('../../config');
 var prefixesManager = require('./prefixes-manager');
+var ToasterError = require('./toaster-error');
 
 /**
  * SparqlQueryAdapter
@@ -21,47 +22,39 @@ function SparqlQueryAdapter() {
 
     // Override of SparqlRoute.handleResponse
     this.handleResponse = function(responseString, requestParams, sparqlEndpoint) {
-        var deferred = Q.defer();
 
-        if (!_.startsWith(responseString, '{')) {
-            deferred.reject(responseString);
-        } else {
-
-            // Initiate main workflow
-            Q.fcall(function () {
+        // Initiate main workflow
+        return Q()
+            .then(function () {
+                if (!_.startsWith(responseString, '{')) {
+                    throw new ToasterError("Invalid SPARQL query issued", 500, responseString);
+                }
                 return responseString;
             })
-                .then(function (r) {
-                    return JSON.parse(responseString);
-                })
-                .then(function (r) {
-                    return self.fixRDFType(r);
-                })
-                .then(function (r) {
-                    return self.applyContext(r);
-                })
-                .then(function (r) {
-                    return self.convertDates(r);
-                })
-                .then(function (r) {
-                    return self.reconstructComplexObjects(r);
-                })
-                .then(function (r) {
-                    return self.processPrefixedProperties(r, sparqlEndpoint);
-                })
-                .then(function (r) {
-                    return self.prepareResponse(r, requestParams);
-                })
-                .then(function (r) {
-                    return self.processModel(r);
-                })
-                .then(function (responseJSON) {
-                    deferred.resolve(responseJSON);
-                })
-                .done(); // throw errors if any
-        }
-
-        return deferred.promise;
+            .then(function (r) {
+                return JSON.parse(responseString);
+            })
+            .then(function (r) {
+                return self.fixRDFType(r);
+            })
+            .then(function (r) {
+                return self.applyContext(r);
+            })
+            .then(function (r) {
+                return self.convertDates(r);
+            })
+            .then(function (r) {
+                return self.reconstructComplexObjects(r);
+            })
+            .then(function (r) {
+                return self.processPrefixedProperties(r, sparqlEndpoint);
+            })
+            .then(function (r) {
+                return self.prepareResponse(r, requestParams);
+            })
+            .then(function (r) {
+                return self.processModel(r);
+            });
 
     };
 

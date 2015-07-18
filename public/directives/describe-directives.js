@@ -12,8 +12,6 @@
                     language: '@'
                 },
                 controller: ['$scope', function($scope) {
-                    console.log($scope);
-                    $scope.language = "abc";
                     if (!$scope.resource) {
                         $scope.resource = $scope.describe;
                     }
@@ -26,7 +24,7 @@
                 }],
                 transclude: true,
                 replace: true,
-                template: '<a ui-sref="root.describe({ resource: \'{{resource}}\', endpoint: \'{{endpoint}}\', language: \'{{language}}\' })" ng-transclude></a>'
+                template: '<a ui-sref="root.describe.formatted({ resource: \'{{resource}}\', endpoint: \'{{endpoint}}\', language: \'{{language}}\' })" ng-transclude></a>'
             };
         }])
 

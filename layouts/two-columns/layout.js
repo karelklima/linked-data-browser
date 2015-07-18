@@ -2,10 +2,14 @@
 
 module.exports = {
 
-    name: 'Single column',
+    name: 'Two Columns',
 
-    template: 'single-column-layout.html',
+    displayTemplate: 'display.html',
 
-    blocks: ['main']
+    setupTemplate: 'display.html',
+
+    defaultPanel: 'main',
+
+    panels: ['main']
 
 };

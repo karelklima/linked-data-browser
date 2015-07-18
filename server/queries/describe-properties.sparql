@@ -3,8 +3,8 @@ PREFIX res: {{ resource }}
 
 CONSTRUCT {
     res: a ?type .
-    res: my:out ?out .
-    res: my:in ?in
+    res: my:subject ?out .
+    res: my:object ?in
 }
 
 WHERE {

@@ -14,13 +14,16 @@ var methodOverride = require('method-override');
 var errorHandler = require('errorhandler');
 var expressJwt = require('express-jwt');
 var cors = require('cors');
+var _ = require('lodash');
 
 var config = require('../config');
 var expressConfig = require('../config/express');
 var authorization = require('./lib/authorization');
+var ToasterError = require('./lib/toaster-error');
 
 var assetsRoutes = require('./routes/assets-routes');
 var configRoutes = require('./routes/config-routes');
+var prefixesRoutes = require('./routes/prefixes-routes');
 var usersRoutes = require('./routes/users-routes');
 var endpointsRoutes = require('./routes/endpoints-routes');
 var languagesRoutes = require('./routes/languages-routes');
@@ -57,6 +60,8 @@ assetsRoutes(app);
 
 configRoutes(app, authorization);
 
+prefixesRoutes(app, authorization);
+
 usersRoutes(app, authorization);
 
 endpointsRoutes(app, authorization);
@@ -70,13 +75,33 @@ searchRoutes(app,  authorization);
 // Setup index
 indexRoutes(app);
 
-// Internal server error or 404
+// Error or 404
 app.use(function (err, req, res, next) {
+
+    if (_.startsWith(req.url, '/api')) {
+        if (err instanceof ToasterError) {
+            // Handle action specific errors
+            if (err.log) {
+                console.error(err.log);
+            }
+            return res.status(err.code).json(err.json);
+        } else {
+            // Handle all other errors
+            var error = new ToasterError('Internal server error occurred', 500);
+            if (err instanceof Error) {
+                //console.error(err.message);
+                console.error(err.stack);
+            } else {
+                console.error(err);
+            }
+            return res.status(error.code).json(error.json);
+        }
+    }
     // 404
     if (~err.message.indexOf('not found')) return next();
 
     console.error(err.stack);
-res.status(500).render('500', {
+    res.status(500).render('500', {
         error: err.stack
     });
 });

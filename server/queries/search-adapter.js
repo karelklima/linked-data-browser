@@ -40,29 +40,13 @@ module.exports = function(query) {
         return params;
     };
 
-    query.prepareResponse = function(response) {
-
-        function renameKey(obj, originalKey, newKey) {
-            if (_.has(obj, originalKey)) {
-                obj[newKey] = obj[originalKey];
-                obj[originalKey] = null;
-                delete obj[originalKey];
-            }
+    query.getContext = function() {
+        return {
+            "text" : "http://my/text",
+            "label" : "http://my/label",
+            "graph" : "http://my/graph",
+            "score" : "http://my/score"
         }
-
-        var renames = ['text', 'label', 'graph', 'score'];
-
-        if (_.isArray(response['@graph'])) {
-            _.forEach(response['@graph'], function(obj) {
-
-                _.forEach(renames, function(key) {
-                    renameKey(obj, 'http://' + key, key);
-                })
-
-            });
-        }
-
-        return response;
-    }
+    };
 
 };

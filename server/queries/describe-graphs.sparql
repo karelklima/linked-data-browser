@@ -1,0 +1,25 @@
+PREFIX my: <http://>
+
+CONSTRUCT {
+    ?subjectGraph my:subjectRelationsCount ?subjectGraphCount .
+    ?objectGraph my:objectRelationsCount ?objectGraphCount .
+}
+
+WHERE {
+    OPTIONAL {
+        SELECT ?subjectGraph (COUNT(?o) as ?subjectGraphCount)
+        WHERE {
+            GRAPH ?subjectGraph {
+                {{ resource }} [] ?o .
+            }
+        }
+    }
+    OPTIONAL {
+        SELECT ?objectGraph (COUNT(?s) as ?objectGraphCount)
+        WHERE {
+            GRAPH ?objectGraph {
+                ?s [] {{ resource }} .
+            }
+        }
+    }
+}

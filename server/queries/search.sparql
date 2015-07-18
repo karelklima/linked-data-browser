@@ -1,4 +1,4 @@
-PREFIX my: <http://>
+PREFIX my: <http://my/>
 
 CONSTRUCT{
   ?resource rdf:type ?type ;

@@ -53,6 +53,14 @@
                         return _.find(config.languages, { alias: alias });
                     };
 
+                    this.getLayoutProfile = function(id) {
+                        return _.find(config.layouts, { id: id });
+                    };
+
+                    this.getMiniappProfile = function(id) {
+                        return _.find(config.miniapps, { id: id });
+                    };
+
                 }
 
                 return new Config();

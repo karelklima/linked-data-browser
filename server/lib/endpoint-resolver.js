@@ -1,20 +1,18 @@
 'use strict';
 
+var ToasterError = require('./toaster-error');
+
 var endpoints = require('../models/endpoints');
 
 module.exports.resolve = function(alias) {
 
     if (!alias) {
-        var resolvedDefault = endpoints.getDefault();
-        if (!resolvedDefault) {
-            throw new Error("Default endpoint not specified");
-        }
-        return resolvedDefault;
+        throw new ToasterError("SPARQL endpoint not specified");
     }
     else {
         var resolved = endpoints.findByAlias(alias);
         if (!resolved) {
-            throw new Error("Requested endpoint does not exist");
+            throw new ToasterError("Requested SPARQL endpoint does not exist");
         }
         return resolved;
     }

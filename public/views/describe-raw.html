@@ -1,0 +1,42 @@
+<div ng-controller="DescribeRawController">
+
+    <hr class="spacer-20"/>
+
+    <loading-bar ng-show="graphsLoading"></loading-bar>
+
+    <form ng-hide="graphsLoading">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th ng-if="graphs.length > 1"><input type="checkbox" ng-model="toggleCheckboxesModel" ng-click="toggleCheckboxes()"/></th>
+                    <th>Graph</th>
+                    <th>Subject of relations</th>
+                    <th>Object of relations</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="graph in graphs">
+                    <td ng-if="graphs.length > 1"><input type="checkbox" ng-model="graph.active"/></td>
+                    <td><a describe resource="{{ graph['@id'] }}">{{ graph['@id'] }}</a></td>
+                    <td>{{ graph['subjectRelationsCount'] }}</td>
+                    <td>{{ graph['objectRelationsCount'] }}</td>
+                </tr>
+            </tbody>
+            <tfoot ng-if="graphs.length > 1">
+                <tr>
+                    <td colspan="4">
+                        <button type="submit" class="btn btn-default" ng-disabled="resourceGraphLoading" ng-click="constrainResult()">CONSTRAIN TO SELECTED GRAPHS</button>
+                        <button type="reset" class="btn btn-default" ng-disabled="resourceGraphLoading" ng-click="reset()">RESET</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+
+    <hr class="spacer-20"/>
+
+    <loading-bar ng-show="resourceGraphLoading"></loading-bar>
+
+    <div ng-show="!resourceGraphLoading" view-builder="view" view-builder-monitor="resourseGraphReloadMonitor"></div>
+
+</div>

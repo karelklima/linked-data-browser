@@ -8,11 +8,17 @@
 
     angular.module('app.directives', []);
 
+    angular.module('app.layouts', []);
+
+    angular.module('app.miniapps', []);
+
     angular.module('app', [
         'app.controllers',
         'app.services',
         'app.filters',
         'app.directives',
+        'app.layouts',
+        'app.miniapps',
         'ui.router',
         'ui.bootstrap',
         'ngMdIcons',
@@ -115,8 +121,23 @@
                         templateUrl: '/public/views/search.html'
                     })
                     .state('root.describe', {
+                        abstract: true,
+                        templateUrl: '/public/views/describe.html'
+                    })
+                    .state('root.describe.formatted', {
                         url: '/describe?resource&endpoint&language',
-                        template: '<p>Describe</p>'
+                        template: '<p>Describe formatted</p>'
+                    })
+                    .state('root.describe.raw', {
+                        url: '/describe-raw?resource&endpoint&language',
+                        templateUrl: '/public/views/describe-raw.html'
+                    })
+                    .state('root.describe.edit', {
+                        url: '/describe-edit?resource&endpoint&language',
+                        template: '<p>Describe edit, for admins only</p>',
+                        data: {
+                            requiresAdmin: true
+                        }
                     });
 
         }])

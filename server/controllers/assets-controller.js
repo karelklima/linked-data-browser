@@ -13,7 +13,3 @@ exports.injectAssets = function(req, res, next) {
     };
     next();
 };
-
-exports.injectAggregatedAssets = function(req, res, next) {
-    // TODO
-};

@@ -6,7 +6,9 @@ var rootPath = path.normalize(__dirname + '/../..');
 
 module.exports = {
     root: rootPath,
+
     datastore: rootPath + '/datastore',
+
     http: {
         port: process.env.PORT || 3000
     },
@@ -40,6 +42,8 @@ module.exports = {
 
     endpointRequestTimeout: 10000,
 
+    logQueries: true,
+
     describeQuery: {
         properties: [
             "rdf:type",
@@ -65,7 +69,7 @@ module.exports = {
         defaultContext: false,
         compactOptions: {"graph" : true, "compactArrays" : false},
         defaultModel: false,
-        replacePrefixes: true,
+        replacePrefixes: false,
         reconstructComplexObjects: true,
         dates : {
             convert : true,

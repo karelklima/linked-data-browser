@@ -8,7 +8,7 @@ var url = require('url');
 var Q = require('q');
 var _ = require('lodash');
 
-var Toaster = require('./toaster');
+var ToasterError = require('./toaster-error');
 var SparqlQueryRenderer = require('./sparql-query-renderer');
 var SparqlQueryAdapter = require('./sparql-query-adapter');
 var endpointResolver = require('./endpoint-resolver');
@@ -53,11 +53,10 @@ function SparqlQueryBroker(sparqlQuery, queryAdapter) {
                 deferred.resolve(responseString);
             });
         }).on('error', function(error) {
-            console.log(error);
-            deferred.reject("Datastore error");
+            deferred.reject(new ToasterError("Error occurred while contacting SPARQL endpoint", 500, error.message));
         });
         request.setTimeout(config.endpointRequestTimeout, function() {
-            deferred.reject("Connection timeout");
+            deferred.reject(new ToasterError("SPARQL endpoint connection timed out"));
         });
 
         return deferred.promise;
@@ -65,55 +64,37 @@ function SparqlQueryBroker(sparqlQuery, queryAdapter) {
 
     this.broke = function(requestQuery) {
 
-        var deferred = Q.defer();
+        var sparqlEndpoint = null;
 
-        var d = domain.create();
+        return Q.fcall(function() {
 
-        d.on('error', function(error) {
-            deferred.reject(error);
-        });
+            sparqlEndpoint = endpointResolver.resolve(requestQuery.endpoint);
+            requestQuery = adapter.prepareParams(requestQuery);
 
-        d.run(function() {
-            process.nextTick(function() { // make it async
-                var sparqlEndpoint = endpointResolver.resolve(requestQuery.endpoint);
+            var queryText = renderer.renderQuery(requestQuery);
 
-                requestQuery = adapter.prepareParams(requestQuery);
-
-                var queryText = renderer.renderQuery(requestQuery);
+            if (config.logQueries) {
                 console.log(queryText);
+            }
 
-                sendRequest(queryText, sparqlEndpoint.url)
-                    .then(function (data) {
-                        return adapter.handleResponse(data, requestQuery, sparqlEndpoint);
-                    })
-                    .then(function (data) {
-                        deferred.resolve(data);
-                    })
-                    .done();
+            return sendRequest(queryText, sparqlEndpoint.url)
+        })
+            .then(function (data) {
+                return adapter.handleResponse(data, requestQuery, sparqlEndpoint);
             });
-        });
-
-        return deferred.promise;
 
     };
 
-    this.serve = function(req, res) {
+    this.serve = function(req, res, next) {
 
-        self.broke(_.clone(req.query))
+        Q()
+            .then(function() {
+                return self.broke(_.clone(req.query));
+            })
             .then(function(data) {
                 return res.status(200).json(data);
             })
-            .catch(function(error) {
-                if (_.isString(error)) {
-                    console.error(error);
-                } else {
-                    console.error(error.message);
-                    console.error(error.stack);
-                }
-                var toaster = new Toaster();
-                toaster.error("There has been a problem with SPARQL endpoint query, aborting operation.");
-                return res.status(400).json(toaster.toJSON());
-            })
+            .catch(next)
             .done();
 
     }

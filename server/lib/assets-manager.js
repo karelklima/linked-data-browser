@@ -18,6 +18,8 @@ function AssetsManager() {
     function scanAssets() {
         scanBowerComponents();
         scanApplicationComponents();
+        scanLayoutsComponents();
+        scanMiniappsComponents();
     }
 
     function scanBowerComponents() {
@@ -39,6 +41,32 @@ function AssetsManager() {
         });
         var jsFiles = glob.sync(baseDir + '/public/**/*.js');
         iterator = 500;
+        _.forEach(jsFiles, function(jsFile) {
+            addAsset(false, false, 'js', jsFile, iterator--);
+        });
+    }
+
+    function scanLayoutsComponents() {
+        var cssFiles = glob.sync(baseDir + '/layouts/*/public/assets/**/*.css');
+        var iterator = 400;
+        _.forEach(cssFiles, function(cssFile) {
+            addAsset(true, false, 'css', cssFile, iterator--);
+        });
+        var jsFiles = glob.sync(baseDir + '/layouts/*/public/**/*.js');
+        iterator = 400;
+        _.forEach(jsFiles, function(jsFile) {
+            addAsset(false, false, 'js', jsFile, iterator--);
+        });
+    }
+
+    function scanMiniappsComponents() {
+        var cssFiles = glob.sync(baseDir + '/miniapps/*/public/assets/**/*.css');
+        var iterator = 400;
+        _.forEach(cssFiles, function(cssFile) {
+            addAsset(true, false, 'css', cssFile, iterator--);
+        });
+        var jsFiles = glob.sync(baseDir + '/miniapps/*/public/**/*.js');
+        iterator = 400;
         _.forEach(jsFiles, function(jsFile) {
             addAsset(false, false, 'js', jsFile, iterator--);
         });

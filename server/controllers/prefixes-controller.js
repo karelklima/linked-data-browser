@@ -1,16 +1,22 @@
 var Toaster = require('../lib/toaster');
 
-var endpoints = require('../models/endpoints');
-var languages = require('../models/languages');
-var layouts = require('../models/layouts');
-var miniapps = require('../models/miniapps');
+var prefixesManager = require('../lib/prefixes-manager');
+var fs = require('fs');
 
 /**
  * Presents application configuration
  */
 exports.get = function(req, res) {
 
-    try {
+
+    var error =        new Error('Asynchronous error from timeout');
+    console.log(error);
+
+
+    var x = {};
+    var f = x.x.throwBall();
+
+    /*try {
 
         var configData = {
             endpoints: endpoints.getAll(),
@@ -27,6 +33,6 @@ exports.get = function(req, res) {
         var toaster = new Toaster();
         toaster.error('Unable to assemble application configuration, please reload the application');
         return res.status(400).json(toaster.toJSON());
-    }
+    }*/
 
 };
