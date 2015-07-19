@@ -3,10 +3,6 @@ var config = require('../../config');
 
 module.exports = function(query) {
 
-    query.getReplacePrefixes = function() {
-        return false;
-    };
-
     query.getContext = function() {
         return {
             "subjectRelationsCount" : "http://my/subjectRelationsCount",

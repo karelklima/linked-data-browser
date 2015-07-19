@@ -34,11 +34,12 @@ function SparqlQueryBroker(sparqlQuery, queryAdapter) {
         queryAdapter(adapter);
     }
 
-    function sendRequest(sparqlQuery, sparqlEndpointUrl) {
+    function sendRequest(sparqlQuery, sparqlEndpointUrl, sparqlEndpointParams) {
 
         var deferred = Q.defer();
 
         var params = _.clone(config.endpointParams);
+        _.assign(params, sparqlEndpointParams);
         params["query"] = sparqlQuery; // sends query as query string parameter
 
         var requestParams = url.parse(sparqlEndpointUrl);
@@ -69,6 +70,16 @@ function SparqlQueryBroker(sparqlQuery, queryAdapter) {
         return Q.fcall(function() {
 
             sparqlEndpoint = endpointResolver.resolve(requestQuery.endpoint);
+
+            var sparqlEndpointParams = {};
+            var prefix = 'endpoint-param-';
+            _.forEach(requestQuery, function(value, param) {
+                if (_.startsWith(param, config.endpointCustomParamPrefix)) {
+                    var finalParam = param.substring(config.endpointCustomParamPrefix.length);
+                    sparqlEndpointParams[finalParam] = value
+                }
+            });
+
             requestQuery = adapter.prepareParams(requestQuery);
 
             var queryText = renderer.renderQuery(requestQuery);
@@ -77,7 +88,7 @@ function SparqlQueryBroker(sparqlQuery, queryAdapter) {
                 console.log(queryText);
             }
 
-            return sendRequest(queryText, sparqlEndpoint.url)
+            return sendRequest(queryText, sparqlEndpoint.url, sparqlEndpointParams);
         })
             .then(function (data) {
                 return adapter.handleResponse(data, requestQuery, sparqlEndpoint);

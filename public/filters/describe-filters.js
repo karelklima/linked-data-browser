@@ -30,6 +30,51 @@
             };
         }])
 
+        .filter('id', ['lodash', function(_) {
+            return function(input) {
+                if (_.has(input, '@id')) {
+                    return input['@id'];
+                }
+                return input;
+            };
+        }])
+
+        .filter('contract', ['PrefixesReplacer', 'lodash', function(PrefixesReplacer, _) {
+            return function(input) {
+                if (_.isArray(input)) {
+                    var r = _.map(input, function(i) {
+                        return PrefixesReplacer.contract(i)
+                    })
+                    console.log(r);
+                    console.log(input);
+                    return r;
+                }
+                return PrefixesReplacer.contract(input);
+            };
+        }])
+
+        .filter('expand', ['PrefixesReplacer', 'lodash', function(PrefixesReplacer, _) {
+            return function(input) {
+                if (_.isArray(input)) {
+                    return _.map(input, function(i) {
+                        return PrefixesReplacer.expand(i)
+                    })
+                }
+                return PrefixesReplacer.expand(input);
+            };
+        }])
+
+        .filter('extract', ['lodash', function(_) {
+            return function(input, key) {
+                if (!_.isArray(input)) {
+                    input = [input];
+                }
+                return _.map(input, function(object) {
+                    _.pick(object, key);
+                });
+            };
+        }]);
+
 
 
 })();

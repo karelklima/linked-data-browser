@@ -2,41 +2,84 @@
 
     angular.module('app.directives')
 
-        .directive('describe', ['CurrentStateHelper', function(CurrentStateHelper) {
+        .directive('describe', ['State', function(State) {
             return {
                 restrict: 'AE',
                 scope: {
                     describe: '=',
                     resource: '@',
                     endpoint: '@',
-                    language: '@'
+                    language: '@',
+                    describeMode: '@'
                 },
                 controller: ['$scope', function($scope) {
                     if (!$scope.resource) {
                         $scope.resource = $scope.describe;
                     }
                     if (!$scope.endpoint) {
-                        $scope.endpoint = CurrentStateHelper.getCurrentEndpoint().alias;
+                        $scope.endpoint = State.getCurrentEndpoint().alias;
                     }
                     if (!$scope.language) {
-                        $scope.language = CurrentStateHelper.getCurrentLanguage().alias;
+                        $scope.language = State.getCurrentLanguage().alias;
+                    }
+                    if (!$scope.describeMode || ($scope.describeMode != 'formatted' && $scope.describeMode != 'raw')) {
+                        $scope.describeMode = 'formatted';
                     }
                 }],
                 transclude: true,
                 replace: true,
-                template: '<a ui-sref="root.describe.formatted({ resource: \'{{resource}}\', endpoint: \'{{endpoint}}\', language: \'{{language}}\' })" ng-transclude></a>'
+                template: '<a ui-sref="root.describe.{{ describeMode }}({ resource: \'{{ resource }}\', endpoint: \'{{ endpoint }}\', language: \'{{ language }}\' })" ng-transclude></a>'
             };
         }])
 
-        .directive('describeList', function() {
+        .directive('describeList', ['lodash', function(_) {
             return {
                 restrict: 'AE',
                 scope: {
-                    describeList: '='
+                    describeList: '=',
+                    describeMode: '@',
+                    filter: '@'
+                },
+                controller: ['$scope', '$filter', function($scope, $filter) {
+                    $scope. filterFunction = function(v) { return v };
+                    if (angular.isDefined($scope.filter)) {
+                        $scope.filterFunction = $filter($scope.filter);
+                    }
+                    $scope.list = _.map($scope.describeList, function(item) {
+                        return {
+                            resource: item,
+                            filtered: $scope.filterFunction(item),
+                            describeMode: $scope.describeMode
+                        }
+                    })
+                }],
+                transclude: true,
+                replace: true,
+                template: '<span ng-repeat="item in list track by item.resource"><a describe describe-mode="{{ item.describeMode }}" resource="{{ item.resource }}">{{ item.filtered }}</a>{{$last ? "" : ", "}}</span>'
+            };
+        }])
+
+        .directive('list', function() {
+            return {
+                restrict: 'AE',
+                scope: {
+                    list: '='
                 },
                 transclude: true,
                 replace: true,
-                template: '<span ng-repeat="resource in describeList"><a describe resource="{{ resource }}">{{ resource }}</a>{{$last ? "" : ", "}}</span>'
+                template: '<div ng-repeat="value in list">{{ value }}</div>'
+            };
+        })
+
+        .directive('list-inline', function() {
+            return {
+                restrict: 'AE',
+                scope: {
+                    listInline: '='
+                },
+                transclude: true,
+                replace: true,
+                template: '<span ng-repeat="value in printValues">{{ value }}{{$last ? "" : ", "}}</span>'
             };
         })
 

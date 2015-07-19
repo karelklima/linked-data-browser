@@ -4,10 +4,10 @@
 
     angular.module('app.services')
 
-        .factory('CurrentStateHelper', ['$rootScope', 'Config',
+        .factory('State', ['$rootScope', 'Config',
             function ($rootScope, Config) {
 
-                function CurrentStateHelper() {
+                function State() {
 
                     var currentEndpoint = Config.getDefaultEndpoint();
                     var currentLanguage = Config.getDefaultLanguage();
@@ -46,7 +46,7 @@
 
                 }
 
-                return new CurrentStateHelper();
+                return new State();
             }
         ]);
 

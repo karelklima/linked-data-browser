@@ -66,14 +66,8 @@
                         templateUrl: '/public/views/root.html',
                         controller: 'RootController',
                         resolve: {
-                            environmentPromise: ['Config', function(Config) {
-                                return Config.configLoadedPromise;
-                            }],
-                            resolvingRoot: ['$q', '$rootScope', function($q, $rootScope) {
-                                var deferred = $q.defer();
-                                $rootScope.$emit('resolving-root');
-                                deferred.resolve();
-                                return deferred.promise;
+                            configPromise: ['Config', function(Config) {
+                                return Config.reload();
                             }]
                         }
                     })

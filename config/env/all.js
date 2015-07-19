@@ -40,6 +40,8 @@ module.exports = {
         timeout: "10000"
     },
 
+    endpointCustomParamPrefix: 'endpoint-param-',
+
     endpointRequestTimeout: 10000,
 
     logQueries: true,

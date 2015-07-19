@@ -13,7 +13,7 @@ module.exports = {
         instances.push({ special: '@type' });
 
         _.forEach(resourceGraph.property, function(property) {
-            instances.push({ relation: property.relation, property: property['@id'] });
+            instances.push(_.pick(property, ['@id', 'relation']));
         });
 
         return instances;

@@ -3,6 +3,7 @@
 var http = require('http');
 var url = require('url');
 var Q = require('q');
+var _ = require('lodash');
 
 var prefixes = require('../models/prefixes');
 var prefixesParser = require('./prefixes-parser');
@@ -27,7 +28,10 @@ function PrefixesManager () {
             });
             res.on('end', function() {
                 var prefixes = prefixesParser.parse(responseString);
-                deferred.resolve(prefixes);
+                if (_.keys(prefixes).length > 0)
+                    deferred.resolve(prefixes);
+                else
+                    deferred.reject(new Error("Cannot retrieve endpoint namespace prefixes"));
             });
         }).on('error', function(error) {
             console.log(error);
@@ -44,7 +48,7 @@ function PrefixesManager () {
             deferred.reject(new Error("Endpoint alias not provided"));
         }
 
-        var stored = prefixes.findByAlias(endpoint.alias);
+        var stored = prefixes.findByEndpoint(endpoint.alias);
 
         if (stored) {
             deferred.resolve(stored.prefixes);
@@ -57,8 +61,9 @@ function PrefixesManager () {
             else {
 
                 retrievePrefixes(endpoint.url)
-                    .then(function(prefixes) {
-                        deferred.resolve(prefixes);
+                    .then(function(fetchedPrefixes) {
+                        prefixes.createPrefixes(endpoint.alias, fetchedPrefixes);
+                        deferred.resolve(fetchedPrefixes);
                     })
                     .catch(function(error) {
                         deferred.reject(error);

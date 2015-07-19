@@ -11,7 +11,6 @@ var _ = require('lodash');
  */
 function PrefixReplacer(prefixes)
 {
-    // init - create prefix map
     this.expand = function(value)
     {
         _.forEach(prefixes, function(url, prefix) {

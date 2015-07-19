@@ -32,9 +32,10 @@
                     });
                 };
 
-                this.getInstance = function(scope) {
-                    return scope.$parent.$parent.miniapp.instance;
+                this.getResourceGraph = function() {
+                    return resourceGraph;
                 }
+
 
             }
         ]);

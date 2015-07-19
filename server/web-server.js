@@ -23,7 +23,6 @@ var ToasterError = require('./lib/toaster-error');
 
 var assetsRoutes = require('./routes/assets-routes');
 var configRoutes = require('./routes/config-routes');
-var prefixesRoutes = require('./routes/prefixes-routes');
 var usersRoutes = require('./routes/users-routes');
 var endpointsRoutes = require('./routes/endpoints-routes');
 var languagesRoutes = require('./routes/languages-routes');
@@ -59,8 +58,6 @@ expressConfig(app);
 assetsRoutes(app);
 
 configRoutes(app, authorization);
-
-prefixesRoutes(app, authorization);
 
 usersRoutes(app, authorization);
 

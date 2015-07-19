@@ -4,13 +4,13 @@
 
     angular.module('app.services')
 
-        .service('Search', ['$rootScope', '$http', '$q', 'CurrentStateHelper',
-            function Search($rootScope, $http, $q, CurrentStateHelper) {
+        .service('Search', ['$rootScope', '$http', '$q', 'State',
+            function Search($rootScope, $http, $q, State) {
 
                 this.search = function(query, types, properties, graphs, limit, offset) {
                     var deferred = $q.defer();
                     $http.get('/api/search', { params: {
-                        endpoint: CurrentStateHelper.getCurrentEndpoint().alias,
+                        endpoint: State.getCurrentEndpoint().alias,
                         query: query,
                         "types[]": types,
                         "properties[]": properties,

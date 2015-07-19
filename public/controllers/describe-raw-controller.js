@@ -51,7 +51,9 @@
                 };
 
                 function getIncludedGraphs() {
-                    return _.filter($scope.graphs, { active: true });
+                    return _.map(_.filter($scope.graphs, { active: true }), function(graph) {
+                        return graph['@id'];
+                    });
                 }
 
                 function updateResourceGraph() {
@@ -64,7 +66,6 @@
                             $scope.resourceGraph = resourceGraph;
                             $scope.view = resourceGraph.view;
                             View.init(resourceGraph, resourceGraph.view);
-                            $scope.$emit('resource-graph-loaded');
                         })
                         .finally(function() {
                             $scope.resourceGraphLoading = false;

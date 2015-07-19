@@ -40,7 +40,7 @@
                 }],
                 transclude: true,
                 replace: false,
-                template: '<div ng-repeat="miniapp in miniapps track by miniapp.tracker" ng-include="miniapp.displayTemplate"></div>'
+                template: '<div ng-repeat="$miniapp in miniapps track by $miniapp.tracker" ng-include="$miniapp.displayTemplate"></div>'
             };
         }])
 

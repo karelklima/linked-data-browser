@@ -41,6 +41,9 @@ function SparqlQueryAdapter() {
                 return self.applyContext(r);
             })
             .then(function (r) {
+                return self.fixJSONLDType(r);
+            })
+            .then(function (r) {
                 return self.convertDates(r);
             })
             .then(function (r) {
@@ -91,6 +94,21 @@ function SparqlQueryAdapter() {
 
         var p = jsonld.promises();
         return p.compact(response, this.getContext(), config.queryAdapter.compactOptions);
+    };
+
+    // Converts @type properties to array - jsonld bug fix
+    this.fixJSONLDType = function(response) {
+        if (!_.has(response, "@graph"))
+            return response;
+
+        var graph = response["@graph"];
+        _.each(response["@graph"], function(item) {
+            if (_.has(item, "@type") && !_.isArray(item["@type"])) {
+                item["@type"] = [item["@type"]];
+            }
+        });
+
+        return response;
     };
 
     // Converts dates according to configuration
@@ -176,64 +194,80 @@ function SparqlQueryAdapter() {
         if (!model) // do not apply model
             return response;
 
-        try {
+        var typeCheckers = {
+            string: _.isString,
+            number: _.isNumber,
+            boolean: _.isBoolean,
+            array: _.isArray,
+            object: _.isPlainObject
+        };
 
-            var processModelPart = function(objects, model) {
+        var typeConverters = {
+            string: function(v) { return String(v); },
+            number: function(v) { return Number(v); },
+            boolean: function(v) { return Boolean(v); },
+            array: function(v) { return [v]; },
+            object: function(v) { return { value: v }; }
+        };
 
-                var keys = _.keys(model);
-                var defaults = {};
-                _.each(keys, function (key) {
-                    defaults[key] = model[key][1];
-                });
-                _.each(objects, function (item) {
-                    _.each(keys, function(key) {
-                        if (!_.isUndefined(item[key]) && typeof item[key] != model[key][0]) {
+        function checkType(value, type) {
+            if (!_.isFunction(typeCheckers[type])) {
+                throw new Error("Invalid type of data provided in JSON-LD model: " + type);
+            }
+            return(typeCheckers[type](value));
+        }
 
-                            var validType = model[key][0];
-                            if (_.isObject(model[key][0]) && !_.isString(model[key][0])) {
-                                validType = "object";
-                            }
+        function processModelKey(key, spec, object) {
+            if (!_.has(object, key)) {
+                object[key] = spec[1];
+            } else if (!checkType(object[key], spec[0])) {
+                // basic converters
+                if (spec[0] == 'array') {
+                    object[key] = typeConverters['array'](object[key]); // literal to array
+                } else if (spec[0] == 'object') {
+                    object[key] = typeConverters['object'](object[key]); // literal to object
+                } else if (checkType(object[key], 'array')) {
+                    if (object[key].length > 0) {
+                        object[key] = typeConverters[spec[0]](object[key][0]); // array to literal
+                    } else {
+                        object[key] = spec[1]; // default value
+                    }
+                } else {
+                    object[key] = typeConverters[spec[0]](object[key]); // convert whatever it is remaining
+                }
+            }
+        }
 
-                            if (_.isObject(model[key][0]) && !_.isString(model[key][0]) && _.isArray(item[key])) {
-                                processModelPart(item[key], model[key][0]);
-                            } else {
-                                if (_.isArray(item[key]) && item[key].length > 0) {
-                                    item[key] = item[key][0];
-                                }
-
-                                if (typeof item[key] != model[key][0]) {
-
-                                    // let's fix some cases
-                                    switch (model[key][0]) {
-                                        case "array":
-                                            item[key] = [item[key]];
-                                            break;
-                                        case "number":
-                                            item[key] = Number(item[key]);
-                                            break;
-                                        case "string":
-                                            item[key] = item[key].toString();
-                                            break;
-                                    }
-                                }
-                            }
+        function processModelPart(objects, model) {
+            var keys = _.keys(model);
+            _.forEach(objects, function(object) {
+                _.forEach(keys, function(key) {
+                    if (_.isString(model[key][0])) {
+                        // processing key
+                        processModelKey(key, model[key], object);
+                    } else {
+                        // next level
+                        if (!_.isPlainObject(model[key][0])) {
+                            throw new Error("Invalid JSON-LD model specification for key: " + key);
                         }
-                    });
-                    _.defaults(item, defaults); // fill in default values
-                    var trailingKeys = _.difference(_.keys(item), keys); // omit unwanted fields
-                    _.each(trailingKeys, function(key) {
-                        delete item[key];
-                    })
+                        if (_.isArray(object[key])) {
+                            processModelPart(object[key], model[key][0]); // standard processing
+                        } else if (_.isPlainObject(object[key])) {
+                            processModelPart([object[key]], model[key][0]); // expand to array
+                        } else {
+                            // different value than expected or empty, replace with default value
+                            object[key] = model[key][1]; //
+                        }
+                    }
                 });
-            };
-
-            processModelPart(response["@graph"], model);
-
+                var trailingKeys = _.difference(_.keys(object), keys); // omit unwanted fields
+                _.each(trailingKeys, function(key) {
+                    delete object[key];
+                })
+            })
         }
-        catch (e) {
-            console.error(e);
-            throw new Error("Unable to process model", e);
-        }
+
+        processModelPart(response["@graph"], model);
 
         return response;
     };

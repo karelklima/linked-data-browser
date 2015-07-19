@@ -1,1 +1,31 @@
-<div ng-controller="RawController">RAW</div>
+<div ng-controller="RawController" class="row raw-row">
+    <div ng-switch="mode">
+        <div ng-switch-when="id">
+            <div class="col-sm-3">
+                URI
+            </div>
+            <div class="col-sm-9">
+                <a ng-href="{{ $graph | id }}">{{ $graph | id }}</a>
+            </div>
+        </div>
+        <div ng-switch-when="type">
+            <div class="col-sm-3">
+                <a describe describe-mode="raw" resource="rdf:type">rdf:type</a>
+            </div>
+            <div class="col-sm-9">
+                <span ng-repeat="type in $graph['@type']"><a describe="type" describe-mode="raw">{{ type | contract }}</a>{{$last ? '' : ', '}}</span>
+                <span describe-list="$graph['@type']" describe-mode="raw" filter="contract"></span>
+            </div>
+        </div>
+        <div ng-switch-when="property">
+            <div class="col-sm-3">
+                <a describe describe-mode="raw" resource="{{ property['@id'] }}">{{ property['@id'] | contract }}</a>
+            </div>
+            <div class="col-sm-9">
+                <div ng-switch="submode">
+                    <div ng-switch-when="literal">{{ property.data | join }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

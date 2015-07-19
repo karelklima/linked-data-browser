@@ -19,9 +19,9 @@ function Prefixes() {
         return false;
     }
 
-    this.findByAlias = function(alias) {
+    this.findByEndpoint = function(alias) {
         return findOne({
-            alias: alias
+            endpoint: alias
         });
     };
 
@@ -32,12 +32,17 @@ function Prefixes() {
     };
 
     this.createPrefixes = function(alias, prefixesList) {
+        var oldVersion = this.findByEndpoint(alias);
+        if (oldVersion) {
+            this.removeById(oldVersion.id);
+        }
+
         prefixes.insert({
-            alias: alias,
+            endpoint: alias,
             prefixes: prefixesList
         });
         return findOne({
-            alias: alias
+            endpoint: alias
         });
     };
 
