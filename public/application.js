@@ -23,7 +23,6 @@
         'ui.bootstrap',
         'ui.select',
         'ui.sortable',
-        'ngMdIcons',
         'angular-jwt',
         'angular-storage',
         'ngCookies',
