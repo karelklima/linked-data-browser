@@ -1,5 +1,5 @@
 var _ = require('lodash');
-var Q = require('Q');
+var Q = require('q');
 
 var endpoints = require('../models/endpoints');
 var languages = require('../models/languages');
