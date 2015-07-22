@@ -1,49 +1,44 @@
-<div id="wrap">
-    <div id="navbar" class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
-        <div class="container">
-            <div class="navbar-header">
-                <a ui-sref="root.home" class="navbar-brand" nowrap><span class="visible-sm visible-md">LD Explorer</span><span class="hidden-sm hidden-md">LinkedData Explorer</span></a>
-                <button type="button" class="navbar-toggle" ng-click="navCollapsed = !navCollapsed">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
-            <div class="navbar-collapse collapse navbar-responsive-collapse" collapse="navCollapsed">
-                <form class="navbar-form navbar-left" role="search" ng-submit="search()">
-                    <input type="text" class="form-control input-search" ng-model="query" placeholder="SEARCH OR URI" required>
-                    <select class="form-control select-endpoint" ng-model="endpoint"
-                            ng-options="ep.name for ep in options.endpoints | orderBy:'name'"
-                            ng-change="updateEndpoint()"></select>
-                    <select class="form-control select-language" ng-model="language"
-                            ng-options="lg.label for lg in options.languages | orderBy:'label'"
-                            ng-change="updateLanguage()"></select>
-                </form>
+<div id="navbar" class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
+    <div class="container">
+        <div class="navbar-header">
+            <a ui-sref="root.home" class="navbar-brand" nowrap><span class="visible-sm visible-md">LD Explorer</span><span class="hidden-sm hidden-md">LinkedData Explorer</span></a>
+            <button type="button" class="navbar-toggle" ng-click="navCollapsed = !navCollapsed">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse" collapse="navCollapsed">
+            <form class="navbar-form navbar-left" role="search" ng-submit="search()">
+                <input type="text" class="form-control input-search" ng-model="query" placeholder="SEARCH OR URI" required>
+                <select class="form-control select-endpoint" ng-model="endpoint"
+                        ng-options="ep.name for ep in options.endpoints | orderBy:'name'"
+                        ng-change="updateEndpoint()"></select>
+                <select class="form-control select-language" ng-model="language"
+                        ng-options="lg.label for lg in options.languages | orderBy:'label'"
+                        ng-change="updateLanguage()"></select>
+            </form>
 
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown user-menu" ng-show="identity.isUser" dropdown>
-                        <a href role="button" class="dropdown-toggle" dropdown-toggle>{{ identity.profile.email }} <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a ui-sref="root.profile">Profile</a></li>
-                            <li ng-show="identity.isAdmin"><a ui-sref="root.admin.users">Administration</a></li>
-                            <li class="divider"></li>
-                            <li><a ng-click="logout()">Logout</a></li>
-                        </ul>
-                    </li>
-                    <li ng-show="identity.isGuest"><a ui-sref="root.login">LOGIN</a></li>
-                    <li ng-show="identity.isGuest"><a ui-sref="root.register">REGISTER</a></li>
-                </ul>
-
-            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown user-menu" ng-show="identity.isUser" dropdown>
+                    <a href role="button" class="dropdown-toggle" dropdown-toggle>{{ identity.profile.email }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a ui-sref="root.profile">Profile</a></li>
+                        <li ng-show="identity.isAdmin"><a ui-sref="root.admin.users">Administration</a></li>
+                        <li class="divider"></li>
+                        <li><a ng-click="logout()">Logout</a></li>
+                    </ul>
+                </li>
+                <li ng-show="identity.isGuest"><a ui-sref="root.login">LOGIN</a></li>
+                <li ng-show="identity.isGuest"><a ui-sref="root.register">REGISTER</a></li>
+            </ul>
 
         </div>
+
     </div>
-
-    <div class="container main-container" ui-view></div>
-
-    <div id="push"></div>
-
 </div>
+
+<div id="main" class="container main-container" ui-view></div>
 
 <div id="footer" >
     <div class="container text-center">
