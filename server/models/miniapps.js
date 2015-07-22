@@ -21,9 +21,18 @@ function Miniapps() {
             if (!fs.lstatSync(dir).isDirectory()) {
                 return; // not a miniapp
             }
-            var miniapp = require(dir + '/miniapp.js');
-
+            var miniapp = _.clone(require(dir + '/miniapp.js'));
             miniapp.id = dir.substring(miniappsDir.length);
+            miniapp = _.defaults(miniapp, {
+                raw: false,
+                inhibitInstances: function(resourceGraph) {
+                    return [];
+                },
+                displayTemplate: 'display.html',
+                setupTemplate: 'setup.html',
+                displayPriority: 0,
+                setupPriority: 0
+            });
 
             assert(!_.isEmpty(miniapp.name), 'Miniapp ' + miniapp.id + ': name must not be empty');
             assert(!_.isEmpty(miniapp.displayTemplate), 'Miniapp ' + miniapp.id + ': displayTemplate must not be empty');
@@ -34,6 +43,7 @@ function Miniapps() {
             assert(fs.existsSync(setupTemplate), 'Miniapp ' + miniapp.id + ': setupTemplate does not exists: ' + setupTemplate);
             assert(_.isBoolean(miniapp.raw), 'Miniapp ' + miniapp.id + ': a raw parameter missing or not a boolean');
             assert(_.isFunction(miniapp.matchInstances), 'Miniapp ' + miniapp.id + ': a matchInstances parameter missing or not a function');
+            assert(_.isFunction(miniapp.inhibitInstances), 'Miniapp ' + miniapp.id + ': a inhibitInstances parameter missing or not a function');
 
             miniapp.displayTemplate = '/miniapps/' + miniapp.id + '/public/views/' + miniapp.displayTemplate; // use absolute path
             miniapp.setupTemplate = '/miniapps/' + miniapp.id + '/public/views/' + miniapp.setupTemplate;
@@ -53,6 +63,12 @@ function Miniapps() {
 
     this.getSetup = function() {
         return miniappsSetup;
+    };
+
+    this.getNotRawMiniapps = function() {
+        return _.filter(miniapps, function(obj) {
+            return _.isUndefined(obj.raw) || obj.raw != true;
+        });
     };
 
     this.getRawMiniapps = function() {

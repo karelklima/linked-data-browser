@@ -1,11 +1,12 @@
 PREFIX my: <http://my/>
 
 CONSTRUCT {
-    {{ property }} my:relation my:object .
-    {{ property }} my:graph ?graph .
-    {{ property }} my:count ?count .
-    {{ property }} my:label ?label .
-    {{ property }} my:data ?object .
+    my:property my:id {{ property }} .
+    my:property my:relation my:object .
+    my:property my:graph ?graph .
+    my:property my:count ?count .
+    my:property my:label ?label .
+    my:property my:data ?object .
     ?object ?property ?value .
 }
 

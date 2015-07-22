@@ -47,8 +47,16 @@
                     return _.find(config.languages, { alias: alias });
                 };
 
+                this.getDefaultLayout = function() {
+                    return _.find(config.layouts, { default: true });
+                };
+
                 this.getLayoutProfile = function(id) {
                     return _.find(config.layouts, { id: id });
+                };
+
+                this.getLayouts = function() {
+                    return config.layouts;
                 };
 
                 this.getMiniappProfile = function(id) {

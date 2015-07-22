@@ -9,6 +9,17 @@ CONSTRUCT {
 
 WHERE {
     OPTIONAL { res: a ?type }
-    OPTIONAL { res: ?out [] . FILTER(?out NOT IN (rdf:type)) }
-    OPTIONAL { [] ?in res: }
+    OPTIONAL {
+        SELECT DISTINCT  ?out
+        WHERE {
+            res: ?out [] .
+            FILTER(?out NOT IN (rdf:type))
+        }
+    }
+    OPTIONAL {
+        SELECT DISTINCT  ?in
+        WHERE {
+            OPTIONAL { [] ?in res: }
+        }
+    }
 }

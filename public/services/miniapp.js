@@ -7,40 +7,25 @@
         .service('Miniapp', ['$rootScope', 'View', 'lodash',
             function Miniapp($rootScope, View, _) {
 
-                var self = this;
-
                 this.decorateScope = function(scope) {
-                    scope.$graph = self.getResourceGraph();
-                    scope.$instance =  self.getInstance(scope);
 
-                    scope.index = function() {
-                        return scope.$parent.$index;
-                    };
-                    scope.isEven = function() {
-                        return scope.$parent.$even;
-                    };
-                    scope.isOdd = function() {
-                        return scope.$parent.$odd;
-                    };
-                    scope.isFirst = function() {
-                        return scope.$parent.$first;
-                    };
-                    scope.isLast = function() {
-                        return scope.$parent.$last;
-                    };
+                    var dataScope = scope.$parent;
+                    while (dataScope != null) {
+                        if (dataScope.$miniapp != null && dataScope.$viewDefinition != null) {
+                            break;
+                        }
+                        dataScope = dataScope.$parent;
+                    }
+                    if (dataScope == null) {
+                        throw new Error("Unable to locate parent data scope");
+                    }
+
+                    scope.$graph = dataScope.$viewDefinition.$graph;
+                    scope.$instance =  dataScope.$miniapp.instance;
+                    scope.$resource = scope.$graph['@id'];
+                    scope.$property = _.find(scope.$graph.property, scope.$instance);
+
                 };
-
-                this.getInstance = function(scope) {
-                    return scope.$parent.$parent.$miniapp.instance;
-                };
-
-                this.getResourceGraph = function() {
-                    return View.getResourceGraph();
-                };
-
-                this.getPropertyDescription = function(property, relation) {
-                    return _.find(this.getResourceGraph().property, { '@id': property, relation: relation });
-                }
 
             }
         ]);

@@ -14,8 +14,8 @@
                 });
 
                 function getCurrentPrefixes() {
-                    return _.has(prefixes, State.getCurrentEndpoint().alias)
-                    ? prefixes[State.getCurrentEndpoint().alias] : {}
+                    return _.has(prefixes, State.getEndpoint().alias)
+                    ? prefixes[State.getEndpoint().alias] : {}
                 }
 
                 this.expand = function(value)

@@ -11,6 +11,7 @@ module.exports = function(query) {
 
     query.getContext = function() {
         return {
+            "id": "http://my/id",
             "label" : "http://my/label",
             "relation" : "http://my/relation",
             "count" : "http://my/count",
@@ -26,14 +27,12 @@ module.exports = function(query) {
         }
 
         var mainObject = response['@graph'][0];
+        mainObject['@id'] = mainObject['id'][0]['@id']; // object reconstruction fix
         if (mainObject['relation'][0]['@id'] == "http://my/subject") {
             mainObject['relation'] = "subject";
         } else {
             mainObject['relation'] = "object";
         }
-        mainObject['graph'] = _.map(mainObject['graph'], function(graph) {
-            return graph['@id'];
-        });
 
         return response
     };

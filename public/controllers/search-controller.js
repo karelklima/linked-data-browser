@@ -2,55 +2,44 @@
 
     angular.module('app.controllers')
 
-        .controller('SearchController', ['$scope', '$rootScope', '$state', '$stateParams', 'Config', 'lodash', 'SearchQueryParser', 'Search',
-            function($scope, $rootScope, $state, $stateParams, Config, _, SearchQueryParser, Search) {
+        .controller('SearchController', ['$scope', '$rootScope', '$state', '$stateParams', 'Config', 'lodash', 'SearchQueryParser', 'Search', 'State',
+            function($scope, $rootScope, $state, $stateParams, Config, _, SearchQueryParser, Search, State) {
 
                 $scope.$on('header-endpoint-changed', function(e, endpoint) {
-                    $state.go('root.search', { endpoint: endpoint.alias });
+                    $state.go($state.$current, { endpoint: endpoint.alias });
                 });
 
                 $scope.$on('header-language-changed', function(e, language) {
-                    $state.go('root.search', { language: language.alias });
+                    $state.go($state.$current, { language: language.alias });
                 });
 
-                var endpointAlias = $stateParams.endpoint;
-                if (_.isString(endpointAlias) && endpointAlias.length > 0) {
-                    $scope.endpoint = Config.getEndpointProfile(endpointAlias);
-                    if (!$scope.endpoint) {
-                        $scope.$emit('toast', "Invalid endpoint provided, using the default one");
-                        $scope.endpoint = Config.getDefaultEndpoint();
-                    }
-                } else {
-                    $scope.endpoint = Config.getDefaultEndpoint();
+                var requestedQuery = $stateParams.query;
+
+                if (!requestedQuery || _.isEmpty(requestedQuery)) {
+                    $state.go('404');
+                    return;
                 }
-
-                var languageAlias = $stateParams.language;
-                if (_.isString(languageAlias) && languageAlias.length > 0) {
-                    $scope.language = Config.getLanguageProfile(languageAlias);
-                    if (!$scope.language) {
-                        $scope.$emit('toast', "Invalid language provided, using the default one");
-                        $scope.language = Config.getDefaultLanguage();
-                    }
-                } else {
-                    $scope.language = Config.getDefaultLanguage();
+                $scope.query = SearchQueryParser.parse(requestedQuery);
+                if (!_.isEmpty($scope.query.resource)) {
+                    // forward URI only requests to describe component
+                    $state.go('root.describe.formatted', {
+                        resource: $scope.query.resource,
+                        endpoint: State.getEndpoint().alias,
+                        language: State.getLanguage().alias
+                    });
+                    return;
                 }
+                $rootScope.$broadcast('search-query-changed', requestedQuery);
 
-                $rootScope.$broadcast('search-endpoint-changed', $scope.endpoint);
-                $rootScope.$broadcast('search-language-changed', $scope.language);
-                $rootScope.$broadcast('search-query-changed', $stateParams.query);
+                State.setEndpoint($stateParams.endpoint, 'search-endpoint-changed');
+                $scope.endpoint = State.getEndpoint();
 
-                $scope.query = SearchQueryParser.parse($stateParams.query);
-
-                Search.search($scope.query.query, $scope.query.types, $scope.query.properties, $scope.query.graphs);
+                State.setLanguage($stateParams.language, 'search-language-changed');
+                $scope.language = State.getLanguage();
 
                 $scope.results = [];
                 $scope.resultsLimit = "10";
                 $scope.resultsOffset = 0;
-                $scope.isLoading = false;
-
-                $scope.isEmpty = function() {
-                    return !$scope.isLoading && angular.isDefined($scope.results) && $scope.results.length == 0;
-                };
 
                 $scope.datasource = {
                     get: function(offset, limit, callback) {

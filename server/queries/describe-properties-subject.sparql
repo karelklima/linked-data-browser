@@ -1,0 +1,10 @@
+PREFIX my: <http://my/>
+
+CONSTRUCT {
+    {{ resource }} my:subject ?property
+}
+
+WHERE {
+    {{ resource }} ?property [] .
+    FILTER(?property NOT IN (rdf:type))
+}

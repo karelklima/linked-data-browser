@@ -31,6 +31,10 @@
     "ng-lodash": "~0.2.3",
     "angular-loading-bar": "~0.8.0",
     "angular-toastr": "~1.4.1",
-    "angular-smart-table": "~2.1.0"
+    "angular-smart-table": "~2.1.0",
+    "json-formatter": "~0.3.1",
+    "angular-sanitize": "~1.4.3",
+    "angular-ui-select": "~0.12.0",
+    "ng-sortable": "~1.2.2"
   }
 }

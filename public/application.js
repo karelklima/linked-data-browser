@@ -21,27 +21,31 @@
         'app.miniapps',
         'ui.router',
         'ui.bootstrap',
+        'ui.select',
+        'ui.sortable',
         'ngMdIcons',
         'angular-jwt',
         'angular-storage',
         'ngCookies',
         'ngAnimate',
+        'ngSanitize',
         'ngLodash',
         'angular-loading-bar',
         'toastr',
-        'smart-table'
+        'smart-table',
+        'jsonFormatter' // TODO REMOVE
     ])
-
-        .run(['$rootScope', '$state', '$stateParams', function ($rootScope, $state, $stateParams) {
-            //$rootScope.$state = $state;
-            //$rootScope.$stateParams = $stateParams;
-        }])
 
         // Routing
         .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider',
             function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider){
-                // For any unmatched url, send to /route1
-                $urlRouterProvider.otherwise("/home");
+
+                $urlRouterProvider.when('', '/');
+                $urlRouterProvider.otherwise(function(injector, location){
+                    var state = injector.get('$state');
+                    state.go('404');
+                    return location.path();
+                });
 
 
                 // FIX of UI Router slash encoding bug - override of the string type
@@ -61,6 +65,9 @@
                     .state('error', {
                         templateUrl: '/public/views/error.html'
                     })
+                    .state('404', {
+                        templateUrl: '/public/views/error-404.html'
+                    })
                     .state('root', {
                         abstract: true,
                         templateUrl: '/public/views/root.html',
@@ -72,7 +79,7 @@
                         }
                     })
                     .state('root.home', {
-                        url: '/home',
+                        url: '/',
                         templateUrl: '/public/views/home.html'
                     })
                     .state('root.login', {
@@ -120,7 +127,7 @@
                     })
                     .state('root.describe.formatted', {
                         url: '/describe?resource&endpoint&language',
-                        template: '<p>Describe formatted</p>'
+                        templateUrl: '/public/views/describe-formatted.html'
                     })
                     .state('root.describe.raw', {
                         url: '/describe-raw?resource&endpoint&language',
@@ -128,7 +135,7 @@
                     })
                     .state('root.describe.edit', {
                         url: '/describe-edit?resource&endpoint&language',
-                        template: '<p>Describe edit, for admins only</p>',
+                        templateUrl: '/public/views/describe-edit.html',
                         data: {
                             requiresAdmin: true
                         }
@@ -220,7 +227,7 @@
             });
         }])
 
-        .run(['$rootScope', '$state', 'Identity', function($rootScope, $state, Identity) {
+        .run(['$rootScope', '$state', '$injector', 'Identity', 'lodash', function($rootScope, $state, $injector, Identity, _) {
             $rootScope.$on('$stateChangeStart', function(e, to, toParams, fromState, fromParams) {
                 if (to.data && to.data.requiresLogin && !Identity.isUser()) {
                     e.preventDefault();
@@ -240,6 +247,7 @@
                     });
                     $state.go('root.login');
                 }
+
             });
 
             $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error){

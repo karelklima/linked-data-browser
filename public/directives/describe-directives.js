@@ -17,10 +17,10 @@
                         $scope.resource = $scope.describe;
                     }
                     if (!$scope.endpoint) {
-                        $scope.endpoint = State.getCurrentEndpoint().alias;
+                        $scope.endpoint = State.getEndpoint().alias;
                     }
                     if (!$scope.language) {
-                        $scope.language = State.getCurrentLanguage().alias;
+                        $scope.language = State.getLanguage().alias;
                     }
                     if (!$scope.describeMode || ($scope.describeMode != 'formatted' && $scope.describeMode != 'raw')) {
                         $scope.describeMode = 'formatted';
@@ -28,7 +28,7 @@
                 }],
                 transclude: true,
                 replace: true,
-                template: '<a ui-sref="root.describe.{{ describeMode }}({ resource: \'{{ resource }}\', endpoint: \'{{ endpoint }}\', language: \'{{ language }}\' })" ng-transclude></a>'
+                template: '<a ui-sref="root.describe.{{ describeMode }}({ resource: \'{{ resource }}\', endpoint: \'{{ endpoint }}\', language: \'{{ language }}\' })" class="word-wrap" ng-transclude></a>'
             };
         }])
 
@@ -46,6 +46,9 @@
                         $scope.filterFunction = $filter($scope.filter);
                     }
                     $scope.list = _.map($scope.describeList, function(item) {
+                        if (_.has(item, '@id')) {
+                            item = item['@id'];
+                        }
                         return {
                             resource: item,
                             filtered: $scope.filterFunction(item),
@@ -83,6 +86,10 @@
             };
         })
 
+        .directive('printValue', function() {
+
+        })
+
         .directive('printValues', function() {
             return {
                 restrict: 'AE',
@@ -91,7 +98,7 @@
                 },
                 transclude: true,
                 replace: true,
-                template: '<div ng-repeat="value in printValues">{{ value["@value"] }}</div>'
+                template: '<div ng-repeat="value in printValues">{{ value | value }} <span class="text-muted" ng-if="value[\'@language\']">@{{ value["@language"] }}</span><span class="text-muted" ng-if="value[\'@type\']">@{{ value["@type"] | contract }}</span></div>'
             };
         })
 

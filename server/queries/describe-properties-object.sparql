@@ -1,0 +1,9 @@
+PREFIX my: <http://my/>
+
+CONSTRUCT {
+    {{ resource }} my:object ?property
+}
+
+WHERE {
+    [] ?property  {{ resource }}.
+}

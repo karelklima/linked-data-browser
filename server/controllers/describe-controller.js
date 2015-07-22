@@ -14,9 +14,22 @@ var describeQuery = require('../queries/describe.sparql');
 var describeAdapter = require('../queries/describe-adapter');
 var describeBroker = new Broker(describeQuery, describeAdapter);
 
-var describePropertiesQuery = require('../queries/describe-properties.sparql');
+exports.describe = describeBroker.serve;
+
+var describeTypeQuery = require('../queries/describe-type.sparql');
+var describeTypeBroker = new Broker(describeTypeQuery);
+
+exports.describeType = describeTypeBroker.serve;
+
 var describePropertiesAdapter = require('../queries/describe-properties-adapter');
-var describePropertiesBroker = new Broker(describePropertiesQuery, describePropertiesAdapter);
+var describePropertiesSubjectQuery = require('../queries/describe-properties-subject.sparql');
+var describePropertiesSubjectBroker = new Broker(describePropertiesSubjectQuery, describePropertiesAdapter);
+var describePropertiesObjectQuery = require('../queries/describe-properties-object.sparql');
+var describePropertiesObjectBroker = new Broker(describePropertiesObjectQuery, describePropertiesAdapter);
+
+exports.describePropertiesSubject = describePropertiesSubjectBroker.serve;
+exports.describePropertiesObject = describePropertiesObjectBroker.serve;
+
 
 var describePropertySubjectQuery = require('../queries/describe-property-subject.sparql');
 var describePropertyObjectQuery = require('../queries/describe-property-object.sparql');
@@ -24,37 +37,43 @@ var describePropertyAdapter = require('../queries/describe-property-adapter');
 var describePropertySubjectBroker = new Broker(describePropertySubjectQuery, describePropertyAdapter);
 var describePropertyObjectBroker = new Broker(describePropertyObjectQuery, describePropertyAdapter);
 
-var describeLabelsQuery = require('../queries/describe-labels.sparql');
-var describeLabelsBroker = new Broker(describeLabelsQuery);
+exports.describePropertySubject = describePropertySubjectBroker.serve;
+exports.describePropertyObject = describePropertyObjectBroker.serve;
+
 
 var describeGraphsQuery = require('../queries/describe-graphs.sparql');
 var describeGraphsAdapter = require('../queries/describe-graphs-adapter');
 var describeGraphsBroker = new Broker(describeGraphsQuery, describeGraphsAdapter);
 
-exports.describe = describeBroker.serve;
-
-exports.describeProperties = describePropertiesBroker.serve;
-
-exports.describePropertySubject = describePropertySubjectBroker.serve;
-
-exports.describePropertyObject = describePropertyObjectBroker.serve;
-
 exports.describeGraphs = describeGraphsBroker.serve;
 
 exports.describeGraph = function(req, res) {
 
-    resourceGraphBuilder
-        .build(req.query)
-        .then(function(consolidatedData) {
-            return res.status(200).json(consolidatedData)
+    Q()
+        .then(function() {
+            return resourceGraphBuilder.build(req.query);
         })
-        .catch(function(error) {
-            console.error(error.message);
-            console.error(error.stack);
-            var toaster = new Toaster();
-            toaster.error("There has been a problem with SPARQL endpoint query, aborting operation.");
-            return res.status(400).json(toaster.toJSON());
-        });
+        .then(function(resourceGraphWithView) {
+            return res.status(200).json(resourceGraphWithView);
+        })
+        .catch(next)
+        .done();
+
+};
+
+exports.describeFormatted = function(req, res, next) {
+
+    Q()
+        .then(function() {
+            return resourceGraphBuilder.build(req.query);
+        }).then(function(resourceGraph) {
+            return viewBuilder.buildFormatted(resourceGraph);
+        })
+        .then(function(resourceGraphWithView) {
+            return res.status(200).json(resourceGraphWithView);
+        })
+        .catch(next)
+        .done();
 
 };
 
@@ -67,9 +86,23 @@ exports.describeRaw = function(req, res, next) {
             return viewBuilder.buildRaw(resourceGraph);
         })
         .then(function(resourceGraphWithView) {
-            return res.status(200).json({
-                '@graph': [resourceGraphWithView]
-            });
+            return res.status(200).json(resourceGraphWithView);
+        })
+        .catch(next)
+        .done();
+
+};
+
+exports.describeEdit = function(req, res, next) {
+
+    Q()
+        .then(function() {
+            return resourceGraphBuilder.build(req.query);
+        }).then(function(resourceGraph) {
+            return viewBuilder.buildEdit(resourceGraph);
+        })
+        .then(function(resourceGraphWithView) {
+            return res.status(200).json(resourceGraphWithView);
         })
         .catch(next)
         .done();

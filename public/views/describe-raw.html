@@ -1,42 +1,59 @@
 <div ng-controller="DescribeRawController">
 
-    <hr class="spacer-20"/>
-
-    <loading-bar ng-show="graphsLoading"></loading-bar>
-
-    <form ng-hide="graphsLoading">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th ng-if="graphs.length > 1"><input type="checkbox" ng-model="toggleCheckboxesModel" ng-click="toggleCheckboxes()"/></th>
-                    <th>Graph</th>
-                    <th>Subject of relations</th>
-                    <th>Object of relations</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="graph in graphs">
-                    <td ng-if="graphs.length > 1"><input type="checkbox" ng-model="graph.active"/></td>
-                    <td><a describe resource="{{ graph['@id'] }}">{{ graph['@id'] }}</a></td>
-                    <td>{{ graph['subjectRelationsCount'] }}</td>
-                    <td>{{ graph['objectRelationsCount'] }}</td>
-                </tr>
-            </tbody>
-            <tfoot ng-if="graphs.length > 1">
-                <tr>
-                    <td colspan="4">
-                        <button type="submit" class="btn btn-default" ng-disabled="resourceGraphLoading" ng-click="constrainResult()">CONSTRAIN TO SELECTED GRAPHS</button>
-                        <button type="reset" class="btn btn-default" ng-disabled="resourceGraphLoading" ng-click="reset()">RESET</button>
-                    </td>
-                </tr>
-            </tfoot>
-        </table>
-    </form>
+    <ng-include src="'/public/views/describe-header.html'"></ng-include>
 
     <hr class="spacer-20"/>
 
-    <loading-bar ng-show="resourceGraphLoading"></loading-bar>
+    <div class="text-center">
+        <span ng-if="!graphsDisplayToggle">
+            <button class="btn btn-default" ng-click="displayGraphs()">
+                Display graphs containing this entity
+            </button>
+        </span>
+        <span ng-if="graphsDisplayToggle">
+            <button class="btn btn-default" ng-click="hideGraphs()">
+                Hide graphs containing this entity
+            </button>
+        </span>
+    </div>
 
-    <div ng-show="!resourceGraphLoading" view-builder="view" view-builder-monitor="resourseGraphReloadMonitor"></div>
+    <hr class="spacer-20"/>
+
+    <loading-bar ng-if="graphsDisplayToggle && graphsLoading"></loading-bar>
+
+    <div class="well well-lg text-center" ng-if="!graphsLoading && graphs.length == 0">Server responded with empty result</div>
+
+    <table ng-if="graphsDisplayToggle && !graphsLoading && graphs.length" class="table">
+        <thead>
+            <tr>
+                <th ng-if="graphs.length > 1"><input type="checkbox" ng-checked="toggleCheckboxesModel" ng-click="toggleCheckboxes()"/></th>
+                <th>Graph</th>
+                <th>Subject of relations</th>
+                <th>Object of relations</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="graph in graphs">
+                <td ng-if="graphs.length > 1"><input type="checkbox" ng-model="graph.active"/></td>
+                <td><a describe-raw resource="{{ graph['@id'] }}">{{ graph['@id'] }}</a></td>
+                <td>{{ graph['subjectRelationsCount'] }}</td>
+                <td>{{ graph['objectRelationsCount'] }}</td>
+            </tr>
+        </tbody>
+        <tfoot ng-if="graphs.length > 1">
+            <tr>
+                <td colspan="4">
+                    <button type="submit" class="btn btn-default" ng-disabled="resourceGraphLoading" ng-click="constrainResult()">CONSTRAIN TO SELECTED GRAPHS</button>
+                    <button type="reset" class="btn btn-default" ng-disabled="resourceGraphLoading" ng-click="reset()">RESET</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <hr class="spacer-20"/>
+
+    <loading-bar ng-if="resourceGraphLoading"></loading-bar>
+
+    <div ng-if="!resourceGraphLoading" view-builder="viewRaw" view-graph="resourceGraph" view-mode="display"></div>
 
 </div>

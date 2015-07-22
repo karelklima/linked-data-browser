@@ -26,6 +26,7 @@ var configRoutes = require('./routes/config-routes');
 var usersRoutes = require('./routes/users-routes');
 var endpointsRoutes = require('./routes/endpoints-routes');
 var languagesRoutes = require('./routes/languages-routes');
+var viewsRoutes = require('./routes/views-routes');
 var describeRoutes = require('./routes/describe-routes');
 var searchRoutes = require('./routes/search-routes');
 var indexRoutes = require('./routes/index-routes');
@@ -64,6 +65,8 @@ usersRoutes(app, authorization);
 endpointsRoutes(app, authorization);
 
 languagesRoutes(app, authorization);
+
+viewsRoutes(app, authorization);
 
 describeRoutes(app, authorization);
 

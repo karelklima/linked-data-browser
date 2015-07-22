@@ -24,36 +24,102 @@ function ViewBuilder() {
         return miniappInstances;
     }
 
-    this.buildRaw = function(resourceGraph) {
+    function buildCustomView(resourceGraph) {
+        return false; // TODO
+    }
 
-        var deferred = Q.defer();
+    function buildView(resourceGraphObject, miniapps) {
 
         var viewLayout = layouts.getDefaultLayout();
         var mainPanel = viewLayout.defaultPanel;
 
         var viewMiniapps = [];
 
-        var setupOrderedMiniapps = _(_.sortBy(miniapps.getRawMiniapps(), 'setupPriority')).reverse().value();
+        var setupOrderedMiniapps = _(_.sortBy(miniapps, 'setupPriority')).value();
 
         _.forEach(setupOrderedMiniapps, function(miniapp) {
-            _.forEach(getMiniappMatchInstances(miniapp, resourceGraph), function(instance) {
-                viewMiniapps.push(instance);
+            var matchedInstances = miniapp.matchInstances(resourceGraphObject);
+
+            if (matchedInstances !== false && !_.isArray(matchedInstances)) {
+                throw new Error("Invalid match instances recieved, an array or false expected");
+            } else if (_.isArray(matchedInstances)) {
+                viewMiniapps.push({
+                    miniapp: miniapp.id,
+                    displayPriority: miniapp.displayPriority,
+                    instances: matchedInstances
+                });
+            }
+
+            var inhibitedInstances = miniapp.inhibitInstances(resourceGraphObject);
+            if (inhibitedInstances !== false && !_.isArray(inhibitedInstances)) {
+                throw new Error("Invalid inhibit instances recieved, an array or false expected");
+            } else if (_.isArray(inhibitedInstances)) {
+                _.forEach(inhibitedInstances, function(miniappInstances) {
+                    if (_.isUndefined(miniappInstances.miniapp)) {
+                        throw new Error("Invalid inhibit instance recieved, a miniapp field expected");
+                    } else if (miniappInstances.instances !== false && !_.isArray(miniappInstances.instances)) {
+                        throw new Error("Invalid inhibit instance recieved, a instances field expected to be false or an array");
+                    } else if (_.isArray(miniappInstances.instances)) {
+                        var target = _.find(viewMiniapps, { miniapp: miniappInstances.miniapp });
+                        if (target) {
+                            _.forEach(miniappInstances.instances, function (inhibitedInstance) {
+                                var targetInstance = _.find(target.instances, inhibitedInstance);
+                                if (targetInstance) {
+                                    _.remove(target.instances, targetInstance);
+                                }
+                            });
+                        }
+                    }
+                 });
+            }
+
+        });
+
+        viewMiniapps = _(_.sortBy(viewMiniapps, 'displayPriority')).reverse().value();
+        var finalOrderedMiniapps = _([]).concat(_.map(viewMiniapps, function(miniapp) {
+            return miniapp.instances;
+        })).value();
+
+        var compactedViewMiniapps = [];
+        _.forEach(viewMiniapps, function(miniapp) {
+            _.forEach(miniapp.instances, function(instance) {
+                compactedViewMiniapps.push({
+                    miniapp: miniapp.miniapp,
+                    instance: instance
+                })
             })
         });
 
-        var panels = { hidden: [] };
-        panels[mainPanel] = viewMiniapps;
 
-        resourceGraph.view = {
-            type: 'raw',
+        var panels = { inactive: [] };
+        panels[mainPanel] = compactedViewMiniapps;
+
+        return {
             layout: viewLayout.id,
             panels: panels
         };
 
-        deferred.resolve(resourceGraph);
+    }
 
-        return deferred.promise;
+    this.buildRaw = function(resourceGraph) {
+        var resourceGraphObject = resourceGraph['@graph'][0];
+        resourceGraphObject['viewRaw'] = buildView(resourceGraphObject, miniapps.getRawMiniapps());
+        return resourceGraph;
+    };
 
+    this.buildFormatted = function(resourceGraph) {
+        var resourceGraphObject = resourceGraph['@graph'][0];
+        // TODO
+        resourceGraphObject['viewFormatted'] = buildView(resourceGraphObject, miniapps.getNotRawMiniapps());
+        return resourceGraph;
+    };
+
+    this.buildEdit = function(resourceGraph) {
+        var resourceGraphObject = resourceGraph['@graph'][0];
+        resourceGraphObject['viewDefault'] = buildView(resourceGraphObject, miniapps.getNotRawMiniapps());
+        resourceGraphObject['viewCustom'] = buildCustomView(resourceGraphObject);
+
+        return resourceGraph;
     }
 
 }

@@ -22,9 +22,13 @@ function Layouts() {
             if (!fs.lstatSync(dir).isDirectory()) {
                 return; // not a layout
             }
-            var layout = require(dir + '/layout.js');
+            var layout = _.clone(require(dir + '/layout.js'));
 
             layout.id = dir.substring(layoutsDir.length);
+            layout = _.defaults(layout, {
+                displayTemplate: 'display.html',
+                setupTemplate: 'setup.html'
+            });
 
             assert(!_.isEmpty(layout.name), 'Layout ' + layout.id + ': name must not be empty');
             assert(!_.isEmpty(layout.displayTemplate), 'Layout ' + layout.id + ': displayTemplate must not be empty');
@@ -44,6 +48,9 @@ function Layouts() {
             layoutsSetup.push(layout);
             if (config.defaultLayout == layout.id) {
                 defaultLayout = layout;
+                layout.default = true;
+            } else {
+                layout.default = false;
             }
         });
         if (defaultLayout == null) {

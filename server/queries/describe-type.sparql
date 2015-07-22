@@ -1,0 +1,6 @@
+CONSTRUCT {
+    {{ resource }} a ?type .
+}
+WHERE {
+    {{ resource }} a ?type .
+}

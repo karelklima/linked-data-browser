@@ -6,98 +6,108 @@ var _ = require('lodash');
 var ToasterError = require('../lib/toaster-error');
 var Broker = require('../lib/sparql-query-broker');
 
-var describePropertiesQuery = require('../queries/describe-properties.sparql');
+var describeTypeQuery = require('../queries/describe-type.sparql');
+var describeTypeBroker = new Broker(describeTypeQuery);
+
 var describePropertiesAdapter = require('../queries/describe-properties-adapter');
-var describePropertiesBroker = new Broker(describePropertiesQuery, describePropertiesAdapter);
+var describePropertiesSubjectQuery = require('../queries/describe-properties-subject.sparql');
+var describePropertiesSubjectBroker = new Broker(describePropertiesSubjectQuery, describePropertiesAdapter);
+var describePropertiesObjectQuery = require('../queries/describe-properties-object.sparql');
+var describePropertiesObjectBroker = new Broker(describePropertiesObjectQuery, describePropertiesAdapter);
 
-var describePropertyOutgoingQuery = require('../queries/describe-property-subject.sparql');
-var describePropertyIncomingQuery = require('../queries/describe-property-object.sparql');
+var describePropertySubjectQuery = require('../queries/describe-property-subject.sparql');
+var describePropertyObjectQuery = require('../queries/describe-property-object.sparql');
 var describePropertyAdapter = require('../queries/describe-property-adapter');
-var describePropertyOutgoingBroker = new Broker(describePropertyOutgoingQuery, describePropertyAdapter);
-var describePropertyIncomingBroker = new Broker(describePropertyIncomingQuery, describePropertyAdapter);
-
-var describeLabelsQuery = require('../queries/describe-labels.sparql');
-var describeLabelsBroker = new Broker(describeLabelsQuery);
+var describePropertySubjectBroker = new Broker(describePropertySubjectQuery, describePropertyAdapter);
+var describePropertyObjectBroker = new Broker(describePropertyObjectQuery, describePropertyAdapter);
 
 function ResourceGraphBuilder() {
 
-    function fetchData(propertiesData, requestQuery) {
-        var deferred = Q.defer();
+    function fetchDefinition(requestQuery) {
 
-        if (propertiesData['@graph'].length < 1) {
-            deferred.resolve([propertiesData]);
-            return deferred.promise; // empty result
+        console.log(requestQuery);
+
+        return Q.all([
+            requestQuery,
+            describeTypeBroker.broke(requestQuery),
+            describePropertiesSubjectBroker.broke(requestQuery),
+            describePropertiesObjectBroker.broke(requestQuery)
+        ]);
+
+    }
+
+    function consolidateDefinition(requestQuery, typesResponse, subjectPropertiesResponse, objectPropertiesResponse) {
+
+        var definitionData = {};
+
+        if (typesResponse['@graph'] && typesResponse['@graph'].length > 0) {
+            definitionData = _.merge(definitionData, typesResponse);
+        }
+        if (subjectPropertiesResponse['@graph'] && subjectPropertiesResponse['@graph'].length > 0) {
+            definitionData = _.merge(definitionData, subjectPropertiesResponse);
+        }
+        if (objectPropertiesResponse['@graph'] && objectPropertiesResponse['@graph'].length > 0) {
+            definitionData = _.merge(definitionData, objectPropertiesResponse);
         }
 
-        var promises = [];
+        if (!_.has(definitionData, "@graph")) {
+            throw new ToasterError("The requested resource not found");
+        }
 
-        var labels = [];
+        return [requestQuery, definitionData];
 
-        var data = propertiesData['@graph'][0];
+    }
+
+    function fetchProperties(requestQuery, definitionData) {
+
+        var propertyPromises = [];
+
+        var data = definitionData['@graph'][0];
 
         _.forEach(data['subject'], function(outProperty) {
             var query = _.clone(requestQuery);
             query.property = outProperty['@id'];
-            labels.push(outProperty['@id']);
-            promises.push(describePropertyOutgoingBroker.broke(query));
+            propertyPromises.push(describePropertySubjectBroker.broke(query));
         });
         _.forEach(data['object'], function(inProperty) {
             var query = _.clone(requestQuery);
             query.property = inProperty['@id'];
-            labels.push(inProperty['@id']);
-            promises.push(describePropertyIncomingBroker.broke(query));
-        });
-        _.forEach(data['@type'], function(type) {
-            labels.push(type);
+            propertyPromises.push(describePropertyObjectBroker.broke(query));
         });
 
         delete data['subject'];
         delete data['object'];
-        promises.push(propertiesData); // types information
 
-        Q.all(promises)
-            .spread(function() {
-                deferred.resolve(arguments);
-            })
-            .catch(function(error) {
-                deferred.reject(error);
-            })
-            .done();
+        return [
+            requestQuery,
+            definitionData,
+            Q.all(propertyPromises)
+        ];
 
-        return deferred.promise;
     }
 
-    function consolidateData(fetchedData) {
+    function consolidateProperties(requestQuery, definitionData, propertyData) {
 
-        if (fetchedData.length == 1 && fetchedData[0]['@graph'].length < 1) {
-            throw new Error("Invalid data for resource graph build");
-        }
+        var target = definitionData['@graph'][0];
+        target.property = [];
 
-        var output = _.last(fetchedData)['@graph'][0];
-        output.property = [];
-
-        fetchedData = _.dropRight(fetchedData);
-
-        _.forEach(fetchedData, function(data) {
+        _.forEach(propertyData, function(data) {
             if (!_.isArray(data['@graph']) || data['@graph'].length != 1) {
                 throw new Error("Invalid data recieved for consolidation");
             }
-            output.property.push(data['@graph'][0]);
+            target.property.push(data['@graph'][0]);
         });
 
-        return output;
+        return definitionData;
     }
 
     this.build = function(requestQuery) {
 
-        return describePropertiesBroker.broke(requestQuery)
-            .then(function(data) {
-                if (data['@graph'].length < 1) {
-                    throw new ToasterError("Requested resource not found");
-                }
-                return fetchData(data, requestQuery);
-            })
-            .then(consolidateData);
+        return Q([requestQuery])
+            .spread(fetchDefinition)
+            .spread(consolidateDefinition)
+            .spread(fetchProperties)
+            .spread(consolidateProperties);
 
     }
 

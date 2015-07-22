@@ -10,7 +10,7 @@
                 this.search = function(query, types, properties, graphs, limit, offset) {
                     var deferred = $q.defer();
                     $http.get('/api/search', { params: {
-                        endpoint: State.getCurrentEndpoint().alias,
+                        endpoint: State.getEndpoint().alias,
                         query: query,
                         "types[]": types,
                         "properties[]": properties,

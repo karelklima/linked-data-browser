@@ -2,28 +2,37 @@
 
     angular.module('app.directives')
 
-        .directive('viewBuilder', ['View', function(View) {
+        .directive('viewBuilder', [function() {
             return {
                 restrict: 'A',
                 scope: {
-                    viewBuilder: '=',
-                    viewBuilderMonitor: '='
+                    $view: '=viewBuilder',
+                    $graph: '=viewGraph'
                 },
-                controller: ['$scope', 'Config', 'View', function($scope, Config) {
-
-                    $scope.layout = null;
-
-                    $scope.$watch('viewBuilder', function(current, previous) {
-                        if (current == null) {
-                            $scope.layout = null;
-                        } else {
-                            $scope.layout = View.getLayout();
-                        }
-                    });
-
-                }],
                 replace: true,
-                template: '<div ng-include="layout.displayTemplate"></div>'
+                controller: ['$scope', function($scope) {
+                    this.$scope = $scope;
+                }],
+                template: '<div ng-include="$view.layout.displayTemplate"></div>'
+            };
+        }])
+
+        .directive('viewBuilderSetup', [function() {
+            return {
+                restrict: 'A',
+                scope: {
+                    $view: '=viewBuilderSetup',
+                    $graph: '=viewGraph'
+                },
+                replace: true,
+                controller: ['$scope', function($scope) {
+                    this.$scope = $scope;
+                }],
+                template:
+                    '<div>' +
+                    '   <div ng-include="$view.layout.setupTemplate"></div>' +
+                    '   <div layout-panel-setup="inactive"></div>' +
+                    '</div>'
             };
         }])
 
@@ -33,14 +42,49 @@
                 scope: {
                     layoutPanel: '@'
                 },
-                controller: ['$scope', 'View', function($scope, View) {
-                    $scope.miniapps = View.getMiniapps($scope.layoutPanel);
-                    console.log($scope.layoutPanel);
-                    console.log($scope.miniapps);
-                }],
+                require: '^viewBuilder',
+                link: function(scope, element, attrs, viewBuilder) {
+                    scope.$builder = viewBuilder.$scope;
+                    console.log(viewBuilder.$scope);
+                },
                 transclude: true,
                 replace: false,
-                template: '<div ng-repeat="$miniapp in miniapps track by $miniapp.tracker" ng-include="$miniapp.displayTemplate"></div>'
+                template: '<div ng-repeat="$miniapp in $builder.$view.panels[layoutPanel] track by $index" ng-include="$miniapp.miniapp.displayTemplate" ng-init="$viewDefinition = $builder"></div>'
+            };
+        }])
+
+        .directive('layoutPanelSetup', [function() {
+            return {
+                restrict: 'A',
+                scope: {
+                    layoutPanelSetup: '@'
+                },
+                require: '^viewBuilderSetup',
+                link: function(scope, element, attrs, viewBuilder) {
+                    scope.$builder = viewBuilder.$scope;
+                    scope.sortableOptions = {
+
+                    }
+                },
+                transclude: true,
+                replace: false,
+                template:
+                '<div ng-class="{ panel: true, \'panel-primary\': layoutPanelSetup != \'inactive\', \'panel-danger\': layoutPanelSetup == \'inactive\' }">' +
+                '   <div class="panel-heading">' +
+                '       <h3 ng-if="layoutPanelSetup != \'inactive\'" class="panel-title">{{layoutPanelSetup}} panel</h3>' +
+                '       <h3 ng-if="layoutPanelSetup == \'inactive\'" class="panel-title">Inactive applications</h3>' +
+                '   </div>' +
+                '   <div class="panel-body">'+
+                '<div as-sortable="sortableOptions" ng-model="$builder.$view.panels[layoutPanelSetup]" class="sortable-panel">' +
+                '   <div as-sortable-item ng-repeat="$miniapp in $builder.$view.panels[layoutPanelSetup]" ng-init="$viewDefinition = $builder">' +
+                '       <div as-sortable-item-handle>' +
+                '       <div ng-include="$miniapp.miniapp.setupTemplate">' +
+                '       </div>' +
+                '       </div>' +
+                '   </div>' +
+                '</div>' +
+                '   </div>' +
+                '</div>'
             };
         }])
 

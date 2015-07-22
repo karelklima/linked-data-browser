@@ -1,0 +1,12 @@
+<div class="heading-fixed-container heading-describe">
+    <div class="container">
+        <ul class="nav nav-heading navbar-left"><li><div class="heading"><a ng-href="{{ resource }}">{{ resource | truncateUriLarge }}</a></div></li></ul>
+        <ul class="nav nav-tabs navbar-right">
+            <li ui-if="watch" ui-sref-active="active"><a describe resource="{{ resource }}" describe-mode="formatted">FORMATTED</a></li>
+            <li ui-sref-active="active"><a ui-sref="root.describe.raw({ 'resource': '{{ resource }}', 'endpoint': '{{ endpoint.alias }}', 'language': '{{ language.alias }}' })">RAW</a></li>
+            <li ui-sref-active="active"><a ui-sref="root.describe.edit({ 'resource': '{{ resource }}', 'endpoint': '{{ endpoint.alias }}', 'language': '{{ language.alias }}' })">EDIT</a></li>
+        </ul>
+    </div>
+</div>
+
+<hr class="heading-fixed-clear"/>

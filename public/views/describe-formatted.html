@@ -1,0 +1,11 @@
+<div ng-controller="DescribeFormattedController">
+
+    <ng-include src="'/public/views/describe-header.html'"></ng-include>
+
+    <hr class="spacer-20"/>
+
+    <loading-bar ng-if="resourceGraphLoading"></loading-bar>
+
+    <div view-builder="$view" view-graph="$graph" view-mode="display"></div>
+
+</div>

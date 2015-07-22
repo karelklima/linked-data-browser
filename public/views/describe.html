@@ -1,17 +1,4 @@
-<div ng-controller="DescribeController as describe">
-
-    <div class="heading-fixed-container heading-admin">
-        <div class="container">
-            <ul class="nav nav-heading navbar-left"><li><div class="heading"><a ng-href="{{ resource }}">{{ resource | truncateUriLarge }}</a></div></li></ul>
-            <ul class="nav nav-tabs navbar-right">
-                <li ui-sref-active="active"><a ui-sref="root.describe.formatted({ 'resource': '{{ resource }}', 'endpoint': '{{ endpoint.alias }}', 'language': '{{ language.alias }}' })">FORMATTED</a></li>
-                <li ui-sref-active="active"><a ui-sref="root.describe.raw({ 'resource': '{{ resource }}', 'endpoint': '{{ endpoint.alias }}', 'language': '{{ language.alias }}' })">RAW</a></li>
-                <li ui-sref-active="active"><a ui-sref="root.describe.edit({ 'resource': '{{ resource }}', 'endpoint': '{{ endpoint.alias }}', 'language': '{{ language.alias }}' })">EDIT</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <hr class="heading-fixed-clear"/>
+<div ng-controller="DescribeController">
 
     <ui-view></ui-view>
 

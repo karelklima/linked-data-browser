@@ -45,7 +45,7 @@ function Endpoints() {
         });
     };
 
-    this.createLanguage = function(name, alias, url) {
+    this.createEndpoint = function(name, alias, url) {
         endpoints.insert({
             name: name,
             alias: alias,

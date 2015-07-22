@@ -40,7 +40,7 @@ module.exports = function(query) {
         return params;
     };
 
-    query.getContext = function() {
+    query.getAdvancedContext = function() {
         return {
             "text" : "http://my/text",
             "label" : "http://my/label",

@@ -37,12 +37,12 @@ module.exports = {
 
     endpointParams: {
         format: "application/ld+json",
-        timeout: "10000"
+        timeout: "20000"
     },
 
     endpointCustomParamPrefix: 'endpoint-param-',
 
-    endpointRequestTimeout: 10000,
+    endpointRequestTimeout: 20000,
 
     logQueries: true,
 
@@ -69,21 +69,10 @@ module.exports = {
 
     queryAdapter: {
         defaultContext: false,
+        defaultAdvancedContext: false,
         compactOptions: {"graph" : true, "compactArrays" : false},
         defaultModel: false,
         replacePrefixes: false,
-        reconstructComplexObjects: true,
-        dates : {
-            convert : true,
-            suffix : "Iso",
-            inputTypes : [
-                "http://www.w3.org/2001/XMLSchema#date"
-            ],
-            inputFormats : [
-                "YYYY-MM-DDZ",
-                "YYYY-MM-DDTHH:mm:ssZ"
-            ],
-            outputFormat : "YYYY-MM-DD"
-        }
+        reconstructComplexObjects: true
     }
 };

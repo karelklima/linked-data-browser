@@ -23,15 +23,14 @@
         <tr>
             <th nowrap>Entity</th>
             <th>Text</th>
-            <th>Graph</th>
         </tr>
         <tr ng-repeat="result in results">
             <td nowrap>
-                <a describe resource="{{ result['@id'] }}">{{ result['@id'] | truncateUri }}</a><br/>
-                <small class="text-muted" describe-list="result['@type']"></small>
+                <span class="text-muted">@id</span> <a describe resource="{{ result['@id'] }}">{{ result['@id'] | truncateUri }}</a><br/>
+                <span class="text-muted">@type</span> <small class="text-muted" describe-list="result['@type']" filter="contract"></small><br/>
+                <div print-ids="result.graph"></div>
             </td>
             <td><div print-values="result.text"></div></td>
-            <td><div print-ids="result.graph"></div></td>
         </tr>
     </table>
 
@@ -41,7 +40,7 @@
 
     <loading-bar ng-show="datasource.isLoading"></loading-bar>
 
-    <div datapager source="datasource" target="results" items-per-page="30"></div>
+    <div dataloader source="datasource" target="results" items-per-page="30" load-more-label="Show more results"></div>
 
     <hr class="spacer-20"/>
 

@@ -2,8 +2,8 @@
 
     angular.module('app.controllers')
 
-        .controller('HeaderController', ['$scope', '$rootScope', '$state', '$stateParams', 'User', 'Identity',  'Config', 'lodash',
-            function($scope, $rootScope, $state, $stateParams, User, Identity, Config, _) {
+        .controller('HeaderController', ['$scope', '$rootScope', '$state', '$stateParams', 'User', 'Identity',  'Config', 'lodash', 'State', 'SearchQueryParser',
+            function($scope, $rootScope, $state, $stateParams, User, Identity, Config, _, State, SearchQueryParser) {
 
                 $scope.navCollapsed = true;
 
@@ -36,21 +36,30 @@
                 });
 
                 $scope.search = function() {
-                    var searchParams = {
-                        query: $scope.query,
-                        endpoint: $scope.endpoint.alias,
-                        language: $scope.language.alias
-                    };
 
-                    $state.go('root.search', searchParams);
+                    var parsed = SearchQueryParser.parse($scope.query);
+                    if (!_.isEmpty(parsed.resource)) {
+                        // forward URI only requests to describe component
+                        $state.go('root.describe.formatted', {
+                            resource: parsed.resource,
+                            endpoint: $scope.endpoint.alias,
+                            language: $scope.language.alias
+                        });
+                    } else {
+                        $state.go('root.search', {
+                            query: $scope.query,
+                            endpoint: $scope.endpoint.alias,
+                            language: $scope.language.alias
+                        });
+                    }
                 };
 
                 $scope.updateEndpoint = function() {
-                    $rootScope.$broadcast('header-endpoint-changed', $scope.endpoint);
+                    State.setEndpoint($scope.endpoint, 'header-endpoint-changed');
                 };
 
                 $scope.updateLanguage = function() {
-                    $rootScope.$broadcast('header-language-changed', $scope.language);
+                    State.setLanguage($scope.language, 'header-language-changed');
                 };
 
                 $scope.$on('search-endpoint-changed', function(e, endpoint) {
@@ -63,6 +72,14 @@
 
                 $scope.$on('search-query-changed', function(e, query) {
                     $scope.query = query;
+                });
+
+                $scope.$on('describe-endpoint-changed', function(e, endpoint) {
+                    $scope.endpoint = endpoint;
+                });
+
+                $scope.$on('describe-language-changed', function(e, language) {
+                    $scope.language = language;
                 });
 
             }

@@ -10,7 +10,9 @@ module.exports = {
 
         instances.push({ special: '@id' });
 
-        instances.push({ special: '@type' });
+        if (_.has(resourceGraph, '@type') && resourceGraph['@type'].length > 0) {
+            instances.push({special: '@type'});
+        }
 
         _.forEach(resourceGraph.property, function(property) {
             instances.push(_.pick(property, ['@id', 'relation']));
@@ -19,10 +21,7 @@ module.exports = {
         return instances;
     },
 
-    displayTemplate: 'display.html',
-    setupTemplate: 'setup.html',
-
-    displayPriority: 0,
+    displayPriority: -100,
     setupPriority: -100
 
 };

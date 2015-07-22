@@ -30,7 +30,7 @@
 
 {% include 'includes/loading.html' %}
 
-<div ui-view></div>
+<div id="root" ui-view></div>
 
 {% for asset in assets.jsFooter %}
 <script type="text/javascript" src="{{asset.url}}"></script>

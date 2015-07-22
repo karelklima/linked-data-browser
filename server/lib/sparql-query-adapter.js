@@ -35,16 +35,10 @@ function SparqlQueryAdapter() {
                 return JSON.parse(responseString);
             })
             .then(function (r) {
-                return self.fixRDFType(r);
+                return self.applyAdvancedContext(r);
             })
             .then(function (r) {
                 return self.applyContext(r);
-            })
-            .then(function (r) {
-                return self.fixJSONLDType(r);
-            })
-            .then(function (r) {
-                return self.convertDates(r);
             })
             .then(function (r) {
                 return self.reconstructComplexObjects(r);
@@ -86,14 +80,19 @@ function SparqlQueryAdapter() {
     };
 
     // Applies context to JSON-LD Virtuoso response using JSONLD library
-    this.applyContext = function(response) {
-        var context = this.getContext();
+    this.applyAdvancedContext = function(response) {
+        var context = this.getAdvancedContext();
         if (!context) {
             return response;
         }
 
+        response = self.fixRDFType(response);
+
         var p = jsonld.promises();
-        return p.compact(response, this.getContext(), config.queryAdapter.compactOptions);
+        return p.compact(response, this.getAdvancedContext(), config.queryAdapter.compactOptions)
+            .then(function(response) {
+                return self.fixJSONLDType(response);
+            });
     };
 
     // Converts @type properties to array - jsonld bug fix
@@ -111,35 +110,29 @@ function SparqlQueryAdapter() {
         return response;
     };
 
-    // Converts dates according to configuration
-    this.convertDates = function(response) {
-        if (self.getConvertDates()) {
-            var context = response["@context"];
-            _.each(_.keys(context), function(key) {
-                if (_.isObject(context[key]) && _.has(context[key], "@type") && _.contains(self.getDateInputTypes(), context[key]["@type"])) {
-                    _.each(response["@graph"], function(item) {
-                        if (_.has(item, key)) {
-                            try {
-                                var convertedKey = key + self.getDateSuffix();
-                                if (_.has(item, convertedKey) && key != convertedKey) {
-                                    // do nothing
-                                } else {
-                                    var temp = item[key][0].substring(0, 10);
-                                    temp = moment(temp);
-                                    //temp.add('days', 1); // fix Virtuoso timezone bug
-                                    item[convertedKey] = [temp.format(self.getDateOutputFormat())];
-                                }
-                            }
-                            catch (e)
-                            {
-                                throw new Error("Unable to parse date: " + item[key]);
-                            }
-                        }
-                    });
-                }
-            });
+    // Renames URIs as keys in objects with defined values
+    this.applyContext = function(response) {
+        var context = this.getContext();
+
+        if (!context || !_.has(response, "@graph")) {
+            return response;
         }
+
+        function RenameKey(object ) {}
+
+        context = _.invert(context);
+
+        response["@graph"] = _.map(response["@graph"], function(object) {
+            return _.mapKeys(object, function(value, originalKey) {
+                if (_.has(context, originalKey)) {
+                    return context[originalKey];
+                }
+                return originalKey;
+            });
+        });
+
         return response;
+
     };
 
     // Converts list of response graph objects into one complex object based on @id
@@ -343,29 +336,14 @@ function SparqlQueryAdapter() {
  * If false is returned, no context operations will be performed
  * @return {object|boolean} definition of JSON-LD context OR false
  */
+SparqlQueryAdapter.prototype.getAdvancedContext = function() {
+    return config.queryAdapter.defaultAdvancedContext;
+};
+// Returns an object of prefixes and URIs to replace in JSON-LD response
 SparqlQueryAdapter.prototype.getContext = function() {
     return config.queryAdapter.defaultContext;
 };
-// Indicates whether or not convert dates in JSON-LD response
-SparqlQueryAdapter.prototype.getConvertDates = function() {
-    return config.queryAdapter.dates.convert;
-};
-// Returns key suffix for converted day values
-SparqlQueryAdapter.prototype.getDateSuffix = function() {
-    return config.queryAdapter.dates.suffix;
-};
-// Returns set of RDF types of date objects to convert
-SparqlQueryAdapter.prototype.getDateInputTypes = function() {
-    return config.queryAdapter.dates.inputTypes;
-};
-// Returns date formats to parse date values with
-SparqlQueryAdapter.prototype.getDateInputFormats = function() {
-    return config.queryAdapter.dates.inputFormats;
-};
-// Return new date output format
-SparqlQueryAdapter.prototype.getDateOutputFormat = function() {
-    return config.queryAdapter.dates.outputFormat;
-};
+
 // Indicates whether or not to convert graph in JSON-LD
 // response specified with multiple objects into one object
 SparqlQueryAdapter.prototype.getReconstructComplexObjects = function() {
