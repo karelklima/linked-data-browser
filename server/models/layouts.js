@@ -62,6 +62,11 @@ function Layouts() {
         return layouts;
     };
 
+    this.getById = function(id) {
+        var result = _.find(layouts, { id: id });
+        return _.isUndefined(result) ? false : result;
+    };
+
     this.getSetup = function() {
         return layoutsSetup;
     };

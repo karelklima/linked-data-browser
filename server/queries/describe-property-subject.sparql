@@ -18,8 +18,8 @@ WHERE {
         OFFSET {{ offset | default:0 }}
     }
     {
-        SELECT (COUNT(?object) as ?count)
-        WHERE { {{ resource }} {{ property }} ?object . }
+        SELECT (COUNT(DISTINCT ?dist) as ?count)
+        WHERE { {{ resource }} {{ property }} ?dist . }
     }
     GRAPH ?graph { {{ resource }} {{ property }} ?object }
     OPTIONAL {

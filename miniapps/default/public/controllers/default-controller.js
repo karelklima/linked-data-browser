@@ -10,14 +10,14 @@
                 $scope.mode = null;
 
                 var i = $scope.$instance;
-                if (i.special && i.special == '@id') {
+                if (i.property == '@id') {
                     $scope.mode = 'id';
-                } else if (i.special && i.special == '@type') {
+                } else if (i.property == '@type') {
                     $scope.mode = 'type';
                 } else {
                     $scope.mode = 'property';
                     $scope.submode = null;
-                    $scope.property = _.find($scope.$graph.property, $scope.$instance);
+                    $scope.property = $scope.$property;
 
                     var sample = $scope.property.data[0];
                     if (!_.isPlainObject(sample)) {

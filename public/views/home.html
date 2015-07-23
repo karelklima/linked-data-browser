@@ -1,1 +1,60 @@
-<div>Home <a ui-sref="root.login">Login</a> </div>
+<div class="home-container">
+    <h3 class="text-center">To start exploring the data, enter a query or URI to the search bar above.</h3>
+    <hr class="spacer-20"/>
+    <h4>Search options</h4>
+    <p>A search query consists of a fulltext expression and optional parameters.</p>
+    <h5>Fulltext expression</h5>
+    <p>Following fulltext search methods are available.</p>
+    <dl class="dl-horizontal">
+        <dt>"text to search"</dt>
+        <dd>
+            Searches for text containing a phrase "text to search"<br>
+            Example: <a ui-sref='root.search({ query: "\"Ministerstvo zahraničních věcí\"" })'>"Ministerstvo zahraničních věcí"</a>
+            &ndash; will return objects with any property containing phrase "Ministerstvo zahraničních věcí".
+        </dd>
+        <dt>text to search</dt>
+        <dd>
+            Is the same as "text to search".<br>
+            Example: <a ui-sref='root.search({ query: "Ministerstvo zahraničních věcí" })'>Ministerstvo zahraničních věcí</a>.
+        </dd>
+        <dt>"text*"</dt>
+        <dd>
+            By default, the search algorithm considers whole words only. To alter this behavior, you can include an asterisk in the query.
+            Due to the limitations of the search engine the word prefix must be at least four characters long.<br>
+            Example: <a ui-sref='root.search({ query: "\"ministerstv*\"" })'>"ministerstv*"</a>
+            &ndash; will return objects with any property containing a word that starts with "ministerstv", i. e. "ministerstvo" or "ministerstva".
+        </dd>
+        <dt>"phrase" AND "other"</dt>
+        <dt>"phrase" OR "other"</dt>
+        <dd>
+            Logical conjunction and disjunction<br>
+            Example: <a ui-sref='root.search({ query: "\"Česká republika\" AND \"Praha\"" })'>"Česká republika" AND "Praha"</a>
+            &ndash; will return objects with any property containing both phrases "Česká republika" and "Praha".
+        </dd>
+    </dl>
+    <p>Note: Some fulltext search methods can have significant impact on performance. When using the asterisk or logical disjunction, it is recommended to
+    narrow the data domain to search at, for example by introducing type or property restrictions described below.</p>
+    <h5>Search parameters</h5>
+    <p>To refine the search, you can specify any number of following search parameters.</p>
+    <dl class="dl-horizontal">
+        <dt>type:<span class="text-muted"><i>URI</i></span></dt>
+        <dd>
+            Constrains the algorithm so that it searches in properties of objects of specified RDF type.<br>
+            Example: <a ui-sref='root.search({ query: "\"trestní zákoník\" type:lex:Act" })'>"trestní zákoník" type:lex:Act</a>
+            &ndash; will return objects of type <a describe resource="lex:Act">lex:Act</a> with any property containing text "trestní zákoník".
+        </dd>
+        <dt>property:<span class="text-muted"><i>URI</i></span></dt>
+        <dd>
+            Specifies a particular property of an object to search in<br>
+            Example: <a ui-sref='root.search({ query: "\2015 property:dcterms:title" })'>2015 property:dcterms:title</a>
+            &ndash; will return objects that have a property <a describe resource="dcterms:title">dcterms:title</a> containing text "2015".
+        </dd>
+        <dt>graph:<span class="text-muted"><i>URI</i></span></dt>
+        <dd>
+            Limits the query to a particular graph<br>
+            Example: <a ui-sref='root.search({ query: "\Praha graph:http://linked.opendata.cz/resource/dataset/seznam.gov.cz/ovm" })'>Praha graph:http://linked.opendata.cz/resource/dataset/seznam.gov.cz/ovm</a>
+            &ndash; will return objects that belong to the specified graph (or dataset) and that have any property that contains text "Praha".
+        </dd>
+    </dl>
+    <p>Note: You can use both prefixed and not prefixed variants of URIs interchangeably.</p>
+</div>

@@ -2,7 +2,7 @@
 
     <hr class="spacer-20"/>
 
-    <p class="text-center">Searching <b><a describe="endpoint.url">{{ endpoint.name }}</a></b> for <b>{{ query.query }}</b>
+    <p class="text-center">Searching <b><a ng-href="{{ endpoint.url }}">{{ endpoint.name }}</a></b> for <b>{{ query.query }}</b>
         in <b ng-if="query.types.length < 1">all types</b>
         <span ng-if="query.types.length > 0">types
             <span ng-repeat="type in query.types"><b><a describe="type">{{ type }}</a></b>{{$last ? '' : ', '}}</span>

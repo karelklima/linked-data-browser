@@ -84,11 +84,11 @@
             var expand = $filter('expand');
             var value = $filter('value');
             var labelProperties = [
+                "label",
                 "rdfs:label",
                 "foaf:name",
                 "dcterms:title",
-                "skos:prefLabel",
-                "http://schema.org/name"
+                "skos:prefLabel"
             ];
 
             function getLabel(input) {

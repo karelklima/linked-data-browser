@@ -1,0 +1,36 @@
+<div ng-controller="AdminMiniappsController">
+
+    <hr class="spacer-20"/>
+
+    <table st-table="displayedMiniapps" st-safe-src="miniapps" class="table table-striped table-hover" ng-cloak>
+        <thead>
+        <tr>
+            <th colspan="5"><input st-search class="form-control" placeholder="Search miniapps" type="text"/></th>
+        </tr>
+        <tr>
+            <th st-sort="id" st-sort-default="true">ID</th>
+            <th st-sort="description">Description</th>
+            <th st-sort="setupPriority">Setup priority</th>
+            <th st-sort="displayPriority">Display priority</th>
+            <th st-sort="setupPriority">Raw view</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="miniapp in displayedMiniapps">
+            <td>{{ miniapp.id }}</td>
+            <td>{{ miniapp.description }}</td>
+            <td>{{ miniapp.setupPriority }}</td>
+            <td>{{ miniapp.displayPriority }}</td>
+            <td>{{ miniapp.raw ? 'YES' : 'NO' }}</td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5" class="text-center">
+                <div st-pagination st-items-by-page="10" st-displayed-pages="10"></div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+
+</div>

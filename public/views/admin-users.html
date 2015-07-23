@@ -19,12 +19,12 @@
                 <td>{{ user.roles | join }}</td>
                 <td class="text-right">
                     <span ng-if="!user.isAdmin">
-                        <button class="btn btn-default btn-sm" ng-click="makeAdmin(user)">Assign admin rights</button>
+                        <button class="btn btn-primary btn-sm" ng-click="makeAdmin(user)">Assign admin rights</button>
                     </span>
                     <span ng-if="user.isAdmin">
-                        <button class="btn btn-default btn-sm" ng-click="revokeAdmin(user)">Revoke admin rights</button>
+                        <button class="btn btn-primary btn-sm" ng-click="revokeAdmin(user)">Revoke admin rights</button>
                     </span>
-                    <button class="btn btn-default btn-sm" ng-click="remove(user)">Delete</button>
+                    <button class="btn btn-danger btn-sm" ng-click="remove(user)">Delete</button>
                 </td>
             </tr>
         </tbody>

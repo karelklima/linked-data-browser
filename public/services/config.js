@@ -63,6 +63,10 @@
                     return _.find(config.miniapps, { id: id });
                 };
 
+                this.getMiniapps = function() {
+                    return _.cloneDeep(config.miniapps);
+                };
+
                 this.getPrefixes = function() {
                     return config.prefixes;
                 }

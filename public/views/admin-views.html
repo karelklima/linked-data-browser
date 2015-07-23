@@ -1,0 +1,35 @@
+<div ng-controller="AdminViewsController">
+
+    <hr class="spacer-20"/>
+
+    <table st-table="displayedViews" st-safe-src="views" class="table table-striped table-hover" ng-cloak>
+        <thead>
+        <tr>
+            <th colspan="3"><input st-search class="form-control" placeholder="Search views" type="text"/></th>
+        </tr>
+        <tr>
+            <th st-sort="description" st-sort-default="true">Description</th>
+            <th st-sort="referenceUri">Reference URI</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="view in displayedViews">
+            <td>{{ view.description }}</td>
+            <td class="word-wrap">{{ view.referenceUri }}</td>
+            <td class="text-right">
+                <button class="btn btn-primary btn-sm" ng-click="edit(view)">Edit</button>
+                <button class="btn btn-danger btn-sm" ng-click="remove(view)">Delete</button>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3" class="text-center">
+                <div st-pagination st-items-by-page="10" st-displayed-pages="10"></div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+
+</div>

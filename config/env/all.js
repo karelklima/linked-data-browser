@@ -51,8 +51,7 @@ module.exports = {
             "rdf:type",
             "foaf:name",
             "dcterms:title",
-            "skos:prefLabel",
-            "http://schema.org/name"
+            "skos:prefLabel"
         ],
         sampleCount: 5
     },
@@ -62,8 +61,7 @@ module.exports = {
             "rdfs:label",
             "foaf:name",
             "dcterms:title",
-            "skos:prefLabel",
-            "http://schema.org/name"
+            "skos:prefLabel"
         ]
     },
 

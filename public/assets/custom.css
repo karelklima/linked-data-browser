@@ -245,6 +245,10 @@ hr.spacer-20 {
     display: table;
 }
 
+.miniapp:after, .miniapp-underlined:after  {
+    clear: both;
+}
+
 .row-even, .row-odd {
     padding: 2px 5px;
     margin-left: -5px;

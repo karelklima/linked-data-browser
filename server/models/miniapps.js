@@ -34,7 +34,7 @@ function Miniapps() {
                 setupPriority: 0
             });
 
-            assert(!_.isEmpty(miniapp.name), 'Miniapp ' + miniapp.id + ': name must not be empty');
+            assert(!_.isEmpty(miniapp.description), 'Miniapp ' + miniapp.id + ': description must not be empty');
             assert(!_.isEmpty(miniapp.displayTemplate), 'Miniapp ' + miniapp.id + ': displayTemplate must not be empty');
             var displayTemplate = dir + '/public/views/' + miniapp.displayTemplate;
             assert(fs.existsSync(displayTemplate), 'Miniapp ' + miniapp.id + ': displayTemplate does not exists: ' + displayTemplate);
@@ -51,8 +51,12 @@ function Miniapps() {
             miniapps.push(miniapp);
             miniappsSetup.push({
                 id: miniapp.id,
+                description: miniapp.description,
                 displayTemplate: miniapp.displayTemplate,
-                setupTemplate: miniapp.setupTemplate
+                setupTemplate: miniapp.setupTemplate,
+                displayPriority: miniapp.displayPriority,
+                setupPriority: miniapp.setupPriority,
+                raw: miniapp.raw
             });
         });
     }
@@ -61,19 +65,14 @@ function Miniapps() {
         return miniapps;
     };
 
+    this.getById = function(id) {
+        var result = _.find(miniapps, { id: id });
+        return _.isUndefined(result) ? false : result;
+    };
+
     this.getSetup = function() {
         return miniappsSetup;
     };
-
-    this.getNotRawMiniapps = function() {
-        return _.filter(miniapps, function(obj) {
-            return _.isUndefined(obj.raw) || obj.raw != true;
-        });
-    };
-
-    this.getRawMiniapps = function() {
-        return _.filter(miniapps, { raw: true });
-    }
 
 }
 

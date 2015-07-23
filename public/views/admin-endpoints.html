@@ -23,9 +23,9 @@
             <td>{{ endpoint.default | boolean | uppercase }}</td>
             <td class="text-right">
                     <span ng-if="!endpoint.default">
-                        <button class="btn btn-default btn-sm" ng-click="makeDefault(endpoint)">Make default</button>
+                        <button class="btn btn-primary btn-sm" ng-click="makeDefault(endpoint)">Make default</button>
                     </span>
-                <button class="btn btn-default btn-sm" ng-click="remove(endpoint)">Delete</button>
+                <button class="btn btn-danger btn-sm" ng-click="remove(endpoint)">Delete</button>
             </td>
         </tr>
         </tbody>

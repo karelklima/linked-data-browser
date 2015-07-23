@@ -116,6 +116,14 @@
                         url: '/users',
                         templateUrl: '/public/views/admin-users.html'
                     })
+                    .state('root.admin.miniapps', {
+                        url: '/miniapps',
+                        templateUrl: '/public/views/admin-miniapps.html'
+                    })
+                    .state('root.admin.views', {
+                        url: '/views',
+                        templateUrl: '/public/views/admin-views.html'
+                    })
                     .state('root.search', {
                         url: '/search?query&endpoint&language',
                         templateUrl: '/public/views/search.html'

@@ -101,11 +101,13 @@
                 };
 
                 this.generate = function(layout, miniapps) {
+                    console.log("HERE");
                     var panels = {};
                     _.forEach(layout.panels, function(panel) {
                         panels[panel] = [];
                     });
                     panels[layout.defaultPanel] = miniapps;
+                    console.log(_.cloneDeep(panels));
                     return {
                         layout: layout,
                         panels: panels

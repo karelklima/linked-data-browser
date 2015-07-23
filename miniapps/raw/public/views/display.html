@@ -41,6 +41,7 @@
                         <div ng-if="more">
                             <div ng-if="!datasource.isLoading" ng-repeat="item in results track by item['@id']">
                                 <div ng-class-even="'row-even'" ng-class-odd="'row-odd'">
+                                    {{ (datasource.page - 1) * 10 + $index + 1 }}.
                                     <a describe="item['@id']" describe-mode="raw">
                                         {{ item | label }}
                                     </a>

@@ -2,8 +2,8 @@
 
     angular.module('app.controllers')
 
-        .controller('DescribeEditController', ['$scope', '$rootScope', '$state', '$stateParams', 'Config', 'lodash', 'Describe', 'View', 'State', 'PrefixesReplacer',
-            function($scope, $rootScope, $state, $stateParams, Config, _, Describe, View, State, PrefixesReplacer) {
+        .controller('DescribeEditController', ['$scope', '$rootScope', '$timeout', '$state', '$stateParams', 'Config', 'lodash', 'Describe', 'View', 'State', 'PrefixesReplacer',
+            function($scope, $rootScope, $timeout, $state, $stateParams, Config, _, Describe, View, State, PrefixesReplacer) {
 
                 init();
 
@@ -19,10 +19,22 @@
 
                     $scope.action = 'decision';
 
+                    if ($scope.$graph.viewCustom != false && $scope.$graph.viewCustom.referenceUri == $scope.resource) {
+                        initEditor();
+                        initCustomModel();
+                        return;
+                    }
+
+                    $scope.actionEditReference = function() {
+                        $state.go('root.describe.edit', { resource: $scope.$graph.viewCustom.referenceUri }, { inherit: true });
+                    };
+
                     $scope.actionCreateNew = function() {
                         initEditor();
                         initNewModel();
-                    }
+                    };
+
+
 
                 }
 
@@ -47,6 +59,10 @@
                         }
                     }
 
+                    if (model.matchingPriority == null || !_.isNumber(model.matchingPriority) || model.matchingPriority > 10000 || model.matchingPriority < -10000) {
+                        errors.push("Matching priority must be a number between -10000 and 10000");
+                    }
+
                     if (errors.length > 0) {
                         _.forEach(errors, function(error) {
                             $scope.$emit('toast', {
@@ -63,17 +79,24 @@
 
                     $scope.savingChanges = true;
 
+                    var panels = $scope.viewModel.layout.panels;
                     var customView = View.contract($scope.$viewEdit);
+                    _.forEach(_.keys(customView.panels), function(panelName) {
+                        if (!_.includes(panels, panelName) && panelName != 'inactive') {
+                            delete customView.panels[panelName];
+                        }
+                    });
                     customView.referenceUri = $scope.viewModel.referenceUri;
                     customView.description = $scope.viewModel.description;
                     customView.matchingRules = rules;
+                    customView.matchingPriority = $scope.viewModel.matchingPriority;
+                    customView.strictMode = $scope.viewModel.strictMode;
 
-                    console.log(customView);
+
                     if (_.isEmpty($scope.$viewId)) {
                         // create
                         View.create(customView)
                             .then(function(data) {
-                                console.log(data.view.id);
                                 $scope.$viewId = data.view.id;
                             })
                             .finally(function() {
@@ -92,6 +115,7 @@
                 function initEditor() {
                     $scope.action = 'editor';
                     $scope.savingChanges = false;
+                    $scope.deletingView = false;
                     initTabs();
                     $scope.options = {
                         layouts: Config.getLayouts(),
@@ -102,10 +126,8 @@
                     };
 
                     $scope.updateLayout = function(layout) {
-                        console.log(layout);
                         var extractedMiniapps = View.extractMiniapps($scope.$viewEdit);
                         var generatedView = View.generate(layout, extractedMiniapps);
-                        console.log(generatedView);
                         $scope.$viewEdit = generatedView;
                     };
 
@@ -115,8 +137,16 @@
 
                     $scope.actionSaveChanges = function() {
                         saveChanges();
-                        console.log('saving');
                     };
+
+                    $scope.actionDeleteView = function() {
+                        $scope.deletingView = true;
+                        View.remove({ id: $scope.$viewId })
+                            .finally(function() {
+                                $scope.deletingView = false;
+                                $state.go('root.describe.formatted', { resource: $scope.resource }, { inherit: true });
+                            })
+                    }
                 }
 
                 function initNewModel() {
@@ -126,8 +156,31 @@
                         referenceUri: $scope.resource,
                         description: "",
                         matchingRules: [undefined],
-                        layout: $scope.$viewEdit.layout
+                        matchingPriority: 0,
+                        layout: $scope.$viewEdit.layout,
+                        strictMode: false
                     };
+                }
+
+                function initCustomModel() {
+                    var view = $scope.$graph.viewCustom;
+                    $scope.$viewEdit = View.expand(view);
+                    $scope.$viewId = view.id;
+                    $scope.viewModel = {
+                        referenceUri: view.referenceUri,
+                        description: view.description,
+                        matchingRules: [],
+                        matchingPriority: view.matchingPriority,
+                        layout: $scope.$viewEdit.layout,
+                        strictMode: view.strictMode
+                    };
+
+                    _.forEach($scope.options.matchingRules, function(rule) {
+                        var match = _.find(view.matchingRules, rule.rule);
+                        if (match) {
+                            $scope.viewModel.matchingRules.push(rule);
+                        }
+                    })
                 }
 
 

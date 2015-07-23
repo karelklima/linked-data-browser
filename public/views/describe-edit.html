@@ -14,17 +14,35 @@
             however the view is permanently associated with particular resource URI used as a reference object,
             which means that the view can be edited only in the context of the reference object, i. e. its subject or object relations.</p>
         </div>
+        <div ng-if="$graph.viewCustom != false" class="well well-lg col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+            <p>The customized view applied to this resource has been created using another resource as a reference resource.<br/>
+                Do you wish to make changes to the view?</p>
+            <p class="text-center"><button class="btn btn-primary" ng-click="actionEditReference()">EDIT THE VIEW USING REFERENCE RESOURCE</button></p>
+            <p>Alternatively you can choose to create a new customized view using current resource as a reference resource.
+                In order that the view is properly applied, you must set higher matching priority than that of the current customized view.
+                <br/> Do you wish to create a new view?</p>
+            <p class="text-center"><button class="btn btn-primary" ng-click="actionCreateNew()">CREATE A NEW CUSTOMIZED VIEW</button></p>
+            <p>Note: a customized view can be applied to multiple data entities specified by matching rules,
+                however the view is permanently associated with particular resource URI used as a reference object,
+                which means that the view can be edited only in the context of the reference object, i. e. its subject or object relations.</p>
+        </div>
     </div>
 
     <div ng-if="action == 'editor'">
 
         <div class="row edit-tabs-container text-center">
             <div>
-                <button class="btn btn-primary" ng-click="actionSaveChanges()" ng-disabled="savingChanges">
+                <button class="btn btn-primary" ng-click="actionSaveChanges()" ng-disabled="savingChanges || deletingView">
                     <span ng-if="!savingChanges">SAVE CHANGES</span>
                     <span ng-if="savingChanges">SAVING CHANGES</span>
                 </button>
-                <button class="btn btn-danger" ng-click="actionDiscardChanges()" ng-disabled="savingChanges">DISCARD CHANGES</button>
+                <button class="btn btn-default" ng-click="actionDiscardChanges()" ng-disabled="savingChanges || deletingView">DISCARD CHANGES</button>
+                <span ng-if="$viewId">
+                    <button class="btn btn-danger" ng-click="actionDeleteView()" ng-disabled="savingChanges || deletingView">
+                        <span ng-if="!deletingView">DELETE VIEW</span>
+                        <span ng-if="deletingView">DELETING VIEW</span>
+                    </button>
+                </span>
             </div>
             <hr class="spacer-20"/>
             <ul class="nav nav-tabs nav-tabs-centered">
@@ -64,6 +82,13 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="col-sm-2 control-label" for="viewMatchingPriority">Matching priority</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="viewMatchingPriority" ng-model="viewModel.matchingPriority">
+                    <p class="help-block">If there are multiple views whose matching subgraphs correspond to a particular resource URI, the view with the highest matching priority is applied.</p>
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-2 control-label">Layout</label>
                 <div class="col-sm-10">
                     <ui-select ng-model="viewModel.layout" theme="bootstrap" on-select="updateLayout($item)">
@@ -72,6 +97,19 @@
                             <div ng-bind-html="value.name | highlight: $select.search"></div>
                         </ui-select-choices>
                     </ui-select>
+                    <p class="help-block">When a new layout is selected, all miniapplications are placed to its main panel by default.</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">Strict mode</label>
+                <div class="col-sm-10">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="viewModel.strictMode"> Restrict displayed properties only to those covered by this view definition.
+                        </label>
+                    </div>
+                    <p class="help-block">In strict mode, any properties that are not dealt with by this customized view will not be shown to the user. However it is
+                        still possible to see them in the RAW view.</p>
                 </div>
             </div>
         </form>
@@ -85,6 +123,7 @@
         </div>
 
         <json-formatter json="viewModel" open="true"></json-formatter>
+        <json-formatter json="$viewEdit" open="true"></json-formatter>
 
     </div>
 

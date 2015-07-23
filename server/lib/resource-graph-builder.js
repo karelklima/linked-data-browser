@@ -50,10 +50,6 @@ function ResourceGraphBuilder() {
             definitionData = _.merge(definitionData, objectPropertiesResponse);
         }
 
-        if (!_.has(definitionData, "@graph")) {
-            throw new ToasterError("The requested resource not found");
-        }
-
         return [requestQuery, definitionData];
 
     }
@@ -62,21 +58,25 @@ function ResourceGraphBuilder() {
 
         var propertyPromises = [];
 
-        var data = definitionData['@graph'][0];
+        if (_.has(definitionData, '@graph')) {
 
-        _.forEach(data['subject'], function(outProperty) {
-            var query = _.clone(requestQuery);
-            query.property = outProperty['@id'];
-            propertyPromises.push(describePropertySubjectBroker.broke(query));
-        });
-        _.forEach(data['object'], function(inProperty) {
-            var query = _.clone(requestQuery);
-            query.property = inProperty['@id'];
-            propertyPromises.push(describePropertyObjectBroker.broke(query));
-        });
+            var data = definitionData['@graph'][0];
 
-        delete data['subject'];
-        delete data['object'];
+            _.forEach(data['subject'], function (outProperty) {
+                var query = _.clone(requestQuery);
+                query.property = outProperty['@id'];
+                propertyPromises.push(describePropertySubjectBroker.broke(query));
+            });
+            _.forEach(data['object'], function (inProperty) {
+                var query = _.clone(requestQuery);
+                query.property = inProperty['@id'];
+                propertyPromises.push(describePropertyObjectBroker.broke(query));
+            });
+
+            delete data['subject'];
+            delete data['object'];
+
+        }
 
         return [
             requestQuery,
@@ -88,17 +88,38 @@ function ResourceGraphBuilder() {
 
     function consolidateProperties(requestQuery, definitionData, propertyData) {
 
-        var target = definitionData['@graph'][0];
-        target.property = [];
+        if (_.has(definitionData, '@graph')) {
+            var target = definitionData['@graph'][0];
+            target.property = [];
 
-        _.forEach(propertyData, function(data) {
-            if (!_.isArray(data['@graph']) || data['@graph'].length != 1) {
-                throw new Error("Invalid data recieved for consolidation");
-            }
-            target.property.push(data['@graph'][0]);
-        });
+            _.forEach(propertyData, function (data) {
+                if (!_.isArray(data['@graph']) || data['@graph'].length != 1) {
+                    throw new Error("Invalid data recieved for consolidation");
+                }
+                target.property.push(data['@graph'][0]);
+            });
+        }
 
-        return definitionData;
+        return [requestQuery, definitionData];
+    }
+
+    function normalizeGraph(requestQuery, data) {
+        if (!_.has(data, '@graph')) {
+            data['@graph'] = [{}];
+        }
+        var object = data['@graph'][0];
+        if (!_.has(object, '@id')) {
+            object['@id'] = requestQuery.resource;
+        }
+        if (!_.has(object, '@type')) {
+            object['@type'] = [];
+        }
+        if (!_.has(object, 'property')) {
+            object['property'] = [];
+        }
+
+        return data;
+
     }
 
     this.build = function(requestQuery) {
@@ -107,7 +128,8 @@ function ResourceGraphBuilder() {
             .spread(fetchDefinition)
             .spread(consolidateDefinition)
             .spread(fetchProperties)
-            .spread(consolidateProperties);
+            .spread(consolidateProperties)
+            .spread(normalizeGraph);
 
     }
 

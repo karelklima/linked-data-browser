@@ -19,7 +19,7 @@
         <div ng-switch-when="property">
             <div class="col-sm-3">
                 <span ng-if="$instance.relation == 'object'">is </span>
-                <a describe resource="{{ property['@id'] }}">{{ property['@id'] | contract }}</a>
+                <a describe resource="{{ property['@id'] }}">{{ property | label }}</a>
                 <span ng-if="$instance.relation == 'object'"> of</span>
             </div>
             <div class="col-sm-9">
@@ -41,6 +41,7 @@
                         <div ng-if="more">
                             <div ng-if="!datasource.isLoading" ng-repeat="item in results track by item['@id']">
                                 <div ng-class-even="'row-even'" ng-class-odd="'row-odd'">
+                                    {{ (datasource.page - 1) * 10 + $index + 1 }}.
                                     <a describe="item['@id']">
                                         {{ item | label }}
                                     </a>

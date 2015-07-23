@@ -23,7 +23,12 @@
                     scope.$graph = dataScope.$viewDefinition.$graph;
                     scope.$instance =  dataScope.$miniapp.instance;
                     scope.$resource = scope.$graph['@id'];
-                    scope.$property = _.find(scope.$graph.property, scope.$instance);
+                    if (scope.$instance.property && scope.$instance.relation) {
+                        scope.$property = _.find(scope.$graph.property, {
+                            '@id': scope.$instance.property,
+                            'relation': scope.$instance.relation
+                        });
+                    }
 
                 };
 

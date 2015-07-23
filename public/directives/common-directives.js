@@ -211,7 +211,7 @@
                     var pagesCount = Math.ceil(totalCount / limit);
 
 
-                        scope.pagination = {
+                    scope.pagination = {
                         current: 1,
                         first: 1,
                         last: pagesCount
@@ -233,6 +233,7 @@
 
                         scope.source.isLoading = true;
                         scope.source.isEmpty = false;
+                        scope.source.page = pageNumber;
                         scope.pagination.current = pageNumber;
                         scope.pages = generatePagesArray(pageNumber, pagesCount, 7);
 

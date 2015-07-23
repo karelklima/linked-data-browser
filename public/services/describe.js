@@ -51,7 +51,7 @@
                         : '/api/describe-property-subject';
                     return $http.get(api, { params: {
                         resource: resource,
-                        property: property['@id'],
+                        property: property['property'],
                         endpoint: State.getEndpoint().alias,
                         limit: limit || 10,
                         offset: offset || 0

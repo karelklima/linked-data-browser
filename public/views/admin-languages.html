@@ -21,9 +21,9 @@
             <td>{{ language.default | boolean | uppercase }}</td>
             <td class="text-right">
                     <span ng-if="!language.default">
-                        <button class="btn btn-default btn-sm" ng-click="makeDefault(language)">Make default</button>
+                        <button class="btn btn-primary btn-sm" ng-click="makeDefault(language)">Make default</button>
                     </span>
-                <button class="btn btn-default btn-sm" ng-click="remove(language)">Delete</button>
+                <button class="btn btn-danger btn-sm" ng-click="remove(language)">Delete</button>
             </td>
         </tr>
         </tbody>
