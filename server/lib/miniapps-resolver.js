@@ -78,6 +78,9 @@ function MiniappsResolver(graph) {
     }
 
     function applyInhibitInstances(miniapp) {
+        if (miniapp._matchInstances.length < 1) {
+            return; // only apply inhibition when the inhibiting miniapplication matches at least one instance
+        }
         _.forEach(miniapp._inhibitInstances, function(miniappInhibitInstances) {
             var targets = _.filter(miniapps, function(potentialTarget) {
                 if (potentialTarget.setupPriority >= miniapp.setupPriority) {
