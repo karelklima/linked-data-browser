@@ -1,0 +1,11 @@
+<div ng-controller="GraphsController">
+    <h3>List of all graphs in current SPARQL endpoint</h3>
+    <p>Note: issuing the query can take up to a minute.</p>
+
+    <loading-bar ng-if="loading"></loading-bar>
+
+    <ul>
+        <li ng-repeat="graph in graphs"><a describe resource="{{ graph | id }}">{{ graph | id }}</a></li>
+    </ul>
+
+</div>

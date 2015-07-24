@@ -112,7 +112,7 @@
                 if (label != false) {
                     return label;
                 } else if (_.has(input, '@id')) {
-                    return contract(input['@id']);
+                    return input['@id'];
                 }
                 return input;
             };
@@ -121,12 +121,7 @@
         .filter('contract', ['PrefixesReplacer', 'lodash', '$filter', function(PrefixesReplacer, _, $filter) {
             var truncateUri = $filter('truncateUri');
             function contract(value) {
-                var contracted = PrefixesReplacer.contract(value);
-                // if the prefix did not get replaced, at least truncate the URI
-                if (_.isEqual(value, contracted)) {
-                    contracted = truncateUri(contracted);
-                }
-                return contracted;
+                return PrefixesReplacer.contract(value);
             }
 
             return function(input) {

@@ -4,10 +4,10 @@
 
     angular.module('app.services')
 
-        .service('Miniapp', ['$rootScope', 'View', 'lodash',
-            function Miniapp($rootScope, View, _) {
+        .service('Miniapp', ['$rootScope', '$http', 'View', 'lodash', 'State',
+            function Miniapp($rootScope, $http, View, _, State) {
 
-                this.decorateScope = function(scope) {
+                this.decorateScope = function (scope) {
 
                     var dataScope = scope.$parent;
                     while (dataScope != null) {
@@ -21,7 +21,7 @@
                     }
 
                     scope.$graph = dataScope.$viewDefinition.$graph;
-                    scope.$instance =  dataScope.$miniapp.instance;
+                    scope.$instance = dataScope.$miniapp.instance;
                     scope.$resource = scope.$graph['@id'];
                     if (scope.$instance.property && scope.$instance.relation) {
                         scope.$property = _.find(scope.$graph.property, {
@@ -30,6 +30,15 @@
                         });
                     }
 
+                };
+
+                this.request = function (api, params) {
+                    params = params || {};
+                    params.endpoint = State.getEndpoint().alias;
+                    return $http.get(api, {params: params})
+                        .then(function(result) {
+                            return result.data;
+                        });
                 };
 
             }

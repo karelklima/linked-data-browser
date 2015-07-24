@@ -28,6 +28,9 @@ function Miniapps() {
                 inhibitInstances: function(resourceGraph) {
                     return [];
                 },
+                setupApplication: function(app, auth) {
+                    return;
+                },
                 displayTemplate: 'display.html',
                 setupTemplate: 'setup.html',
                 displayPriority: 0,

@@ -30,7 +30,7 @@
                         <div ng-if="!more">
                             <div ng-repeat="item in property.data track by item['@id']">
                                 <a describe="item['@id']" describe-mode="raw">
-                                    {{ item | label }}
+                                    {{ item | label | contract }}
                                 </a>
                             </div>
                             <div ng-if="property.count > property.data.length">
@@ -43,7 +43,7 @@
                                 <div ng-class-even="'row-even'" ng-class-odd="'row-odd'">
                                     {{ (datasource.page - 1) * 10 + $index + 1 }}.
                                     <a describe="item['@id']" describe-mode="raw">
-                                        {{ item | label }}
+                                        {{ item | label | contract }}
                                     </a>
                                 </div>
                             </div>

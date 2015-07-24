@@ -31,6 +31,8 @@ var describeRoutes = require('./routes/describe-routes');
 var searchRoutes = require('./routes/search-routes');
 var indexRoutes = require('./routes/index-routes');
 
+var miniapps = require('./models/miniapps');
+
 var app = express();
 
 // Setup views directory
@@ -71,6 +73,10 @@ viewsRoutes(app, authorization);
 describeRoutes(app, authorization);
 
 searchRoutes(app,  authorization);
+
+_.forEach(miniapps.getAll(), function(miniapp) {
+    miniapp.setupApplication(app, authorization);
+});
 
 // Setup index
 indexRoutes(app);

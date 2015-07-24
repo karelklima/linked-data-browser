@@ -19,7 +19,7 @@
         <div ng-switch-when="property">
             <div class="col-sm-3">
                 <span ng-if="$instance.relation == 'object'">is </span>
-                <a describe resource="{{ property['@id'] }}">{{ property | label }}</a>
+                <a describe resource="{{ property['@id'] }}">{{ property | label | contract | truncateUri }}</a>
                 <span ng-if="$instance.relation == 'object'"> of</span>
             </div>
             <div class="col-sm-9">
@@ -30,7 +30,7 @@
                         <div ng-if="!more">
                             <div ng-repeat="item in property.data track by item['@id']">
                                 <a describe="item['@id']">
-                                    {{ item | label }}
+                                    {{ item | label | contract | truncateUriLarge }}
                                 </a>
                             </div>
                             <div ng-if="property.count > property.data.length">
@@ -43,7 +43,7 @@
                                 <div ng-class-even="'row-even'" ng-class-odd="'row-odd'">
                                     {{ (datasource.page - 1) * 10 + $index + 1 }}.
                                     <a describe="item['@id']">
-                                        {{ item | label }}
+                                        {{ item | label | contract | truncateUriLarge }}
                                     </a>
                                 </div>
                             </div>

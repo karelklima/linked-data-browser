@@ -1,0 +1,14 @@
+PREFIX my: <http://my/>
+
+CONSTRUCT {
+    my:graphs my:graph ?graph.
+}
+
+WHERE {
+    SELECT DISTINCT ?graph
+    WHERE {
+        GRAPH ?graph {
+            ?s ?p ?o
+        }
+    }
+}

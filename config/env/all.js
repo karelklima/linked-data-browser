@@ -37,12 +37,12 @@ module.exports = {
 
     endpointParams: {
         format: "application/ld+json",
-        timeout: "20000"
+        timeout: "60000"
     },
 
     endpointCustomParamPrefix: 'endpoint-param-',
 
-    endpointRequestTimeout: 20000,
+    endpointRequestTimeout: 60000,
 
     logQueries: true,
 

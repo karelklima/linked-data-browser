@@ -31,8 +31,7 @@
         'ngLodash',
         'angular-loading-bar',
         'toastr',
-        'smart-table',
-        'jsonFormatter' // TODO REMOVE
+        'smart-table'
     ])
 
         // Routing
