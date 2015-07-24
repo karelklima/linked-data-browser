@@ -4,6 +4,8 @@
 
     <loading-bar ng-if="loading"></loading-bar>
 
+    <div ng-if="error" class="alert alert-danger">SPARQL request query failed, it probably took too long.</div>
+
     <ul>
         <li ng-repeat="graph in graphs"><a describe resource="{{ graph | id }}">{{ graph | id }}</a></li>
     </ul>

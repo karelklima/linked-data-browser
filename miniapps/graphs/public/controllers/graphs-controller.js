@@ -8,14 +8,20 @@
                 Miniapp.decorateScope($scope);
 
                 $scope.loading = true;
+                $scope.error = false;
                 $scope.graphs = undefined;
 
                 Miniapp.request('/api/graphs')
                     .then(function(data) {
-                        $scope.loading = false;
-                        console.log(data);
                         $scope.graphs = data['@graph'][0]['graph'];
+                    }, function(error) {
+                        $scope.error = true;
+                    })
+                    .finally(function() {
+                        $scope.loading = false;
+
                     });
+
 
             }
         ]);
