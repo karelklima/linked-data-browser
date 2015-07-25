@@ -1,26 +1,20 @@
 <div ng-controller="OrganizationPropertyController" class="miniapp-underlined">
     <div class="col-sm-3">
-        <span ng-if="$property.relation == 'object'">is</span>
         <a describe resource="{{ $property['@id'] }}">{{ $property | label | contract | truncateUri }}</a>
-        <span ng-if="$property.relation == 'object'">of</span>
     </div>
     <div class="col-sm-9">
-        <span ng-if="!addressesLoaded">
-            <span ng-init="sampleObject = $property.data[0]">
-                <a describe="sampleObject['@id']">
-                    {{ sample | label | contract | truncateUriLarge }}
+        <span ng-if="!organizationLoaded">
+            <span ng-init="firstObject = $property.data[0]">
+                <a describe="firstObject['@id']">
+                    {{ firstObject | label | contract | truncateUriLarge }}
                 </a>
             </span>
         </span>
-        <span ng-if="addressesLoaded">
-            <span ng-init="sampleAddress = $property.data[0]">
-                <a describe="sampleAddress['@id']">
-                    {{ sampleAddress['http://schema.org/streetAddress'] | value }}, {{ sampleAddress['http://schema.org/postalCode'] | value }} {{ sampleAddress['http://schema.org/addressLocality'] | value }}
-                </a>
+        <span ng-if="organizationLoaded">
+            <span ng-init="organization = $property.data[0]">
+                <a describe="sampleAddress['@id']">{{ organization['title'] | value }}</a><br/>
+                ID: {{ organization['identifier'] | value }}
             </span>
-        </span>
-        <span ng-if="$property.count > 1" class="text-muted">
-            (+ {{ $property.count - 1 }} more)
         </span>
     </div>
 </div>
