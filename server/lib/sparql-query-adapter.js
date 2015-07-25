@@ -152,15 +152,16 @@ function SparqlQueryAdapter() {
 
         // find links among graph objects
         _.each(response["@graph"], function(object) {
+            var currentId = object['@id'];
             _.each(object, function(values, key) {
                 if (key.indexOf("@") == 0)
                     return; // RDF-specific property
                 _.each(values, function(value, index) {
-                    if (_.has(objects, value)) { // link to another object
+                    if (_.has(objects, value) && value != currentId) { // link to another object
                         values[index] = objects[value].data;
                         objects[value].isLinked = true;
                     }
-                    else if (_.isObject(value) && value["@id"] && _.has(objects, value["@id"])) {
+                    else if (_.isObject(value) && value["@id"] && _.has(objects, value["@id"]) && value["@id"] != currentId) {
                         values[index] = objects[value["@id"]].data;
                         objects[value["@id"]].isLinked = true;
                     }
@@ -297,6 +298,9 @@ function SparqlQueryAdapter() {
                         } else if (predicate == '@type') {
                             if (_.isArray(values)) {
                                 newObj['@type'] = _.map(values, function (value) {
+                                    if (_.isPlainObject(value)) {
+                                        return { '@id': replacer.contract(value['@id']) }
+                                    }
                                     return replacer.contract(value);
                                 });
                             } else {

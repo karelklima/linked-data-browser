@@ -1,0 +1,20 @@
+<div ng-controller="OrganizationPropertyController" class="miniapp-underlined">
+    <div class="col-sm-3">
+        <a describe resource="{{ $property['@id'] }}">{{ $property | label | contract | truncateUri }}</a>
+    </div>
+    <div class="col-sm-9">
+        <span ng-if="!organizationLoaded">
+            <span ng-init="firstObject = $property.data[0]">
+                <a describe="firstObject['@id']">
+                    {{ firstObject | label | contract | truncateUriLarge }}
+                </a>
+            </span>
+        </span>
+        <span ng-if="organizationLoaded">
+            <span ng-init="organization = $property.data[0]">
+                <a describe="sampleAddress['@id']">{{ organization['title'] | value }}</a><br/>
+                ID: {{ organization['identifier'] | value }}
+            </span>
+        </span>
+    </div>
+</div>

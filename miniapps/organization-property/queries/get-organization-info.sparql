@@ -1,0 +1,13 @@
+PREFIX my: <http://my/>
+
+CONSTRUCT {
+    {{ resource }} my:title ?title .
+    {{ resource }} my:identifier ?id .
+}
+
+WHERE {
+    {{ resource }} dcterms:title ?title .
+    {{ resource }} owl:sameAs* ?sameObj .
+    ?sameObj adms:identifier ?idObject .
+    ?idObject skos:prefLabel ?id
+}

@@ -3,7 +3,6 @@ PREFIX my: <http://my/>
 CONSTRUCT {
     my:property my:id {{ property }} .
     my:property my:relation my:subject .
-    my:property my:graph ?graph .
     my:property my:count ?count .
     my:property my:label ?label .
     my:property my:data ?object .
@@ -21,7 +20,6 @@ WHERE {
         SELECT (COUNT(DISTINCT ?dist) as ?count)
         WHERE { {{ resource }} {{ property }} ?dist . }
     }
-    GRAPH ?graph { {{ resource }} {{ property }} ?object }
     OPTIONAL {
         VALUES ?property { {{ requested-properties | escape-uri-list }} } .
         ?object ?property ?value .

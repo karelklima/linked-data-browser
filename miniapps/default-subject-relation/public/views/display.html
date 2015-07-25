@@ -1,0 +1,42 @@
+<div ng-controller="DefaultSubjectRelationController" class="miniapp-underlined">
+    <div class="col-sm-3">
+        <a describe resource="{{ $property['@id'] }}">{{ $property | label | contract | truncateUri }}</a>
+    </div>
+    <div class="col-sm-9">
+        <div ng-switch="submode">
+            <div ng-switch-when="literal">{{ $property.data | join }}</div>
+            <div ng-switch-when="value"><div print-values="$property.data"></div></div>
+            <div ng-switch-when="object">
+                <div ng-if="!more">
+                    <div ng-repeat="item in $property.data track by item['@id']">
+                        <a describe="item['@id']">
+                            {{ item | label | contract | truncateUriLarge }}
+                        </a>
+                    </div>
+                    <div ng-if="$property.count > $property.data.length">
+                        <hr class="spacer-10"/>
+                        <button class="btn btn-default btn-sm" ng-click="showMore()">Show more objects ({{ $property.count }} total)</button>
+                    </div>
+                </div>
+                <div ng-if="more">
+                    <div ng-if="!datasource.isLoading" ng-repeat="item in results track by item['@id']">
+                        <div ng-class-even="'row-even'" ng-class-odd="'row-odd'">
+                            {{ (datasource.page - 1) * 10 + $index + 1 }}.
+                            <a describe="item['@id']">
+                                {{ item | label | contract | truncateUriLarge }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="well well-lg text-center" ng-if="datasource.isEmpty">
+                        Server responded with an empty result.
+                    </div>
+
+                    <loading-bar ng-show="datasource.isLoading"></loading-bar>
+
+                    <div datapager source="datasource" target="results" items-per-page="10" total-count="{{ $property.count }}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+<div ng-controller="SPostalAddressController" class="miniapp-underlined">
+    <div class="col-sm-3">
+        <span ng-if="$property.relation == 'object'">is</span>
+        <a describe resource="{{ $property['@id'] }}">{{ $property | label | contract | truncateUri }}</a>
+        <span ng-if="$property.relation == 'object'">of</span>
+    </div>
+    <div class="col-sm-9">
+        <div ng-if="!addressesLoaded">
+            <div ng-repeat="item in $property.data track by item['@id']">
+                <a describe="item['@id']">
+                    {{ item | label | contract | truncateUriLarge }}
+                </a>
+            </div>
+        </div>
+        <div ng-if="!more && addressesLoaded">
+            <div ng-repeat="item in $property.data track by item['@id']">
+                <a describe="item['@id']">
+                    {{ item['http://schema.org/streetAddress'] | value }}, {{ item['http://schema.org/postalCode'] | value }} {{ item['http://schema.org/addressLocality'] | value }}
+                </a>
+            </div>
+            <div ng-if="$property.count > $property.data.length">
+                <hr class="spacer-10"/>
+                <button class="btn btn-default btn-sm" ng-click="showMore()">Show more objects ({{ $property.count }} total)</button>
+            </div>
+        </div>
+        <div ng-if="more">
+            <div ng-if="!datasource.isLoading" ng-repeat="item in results track by item['@id']">
+                <div ng-class-even="'row-even'" ng-class-odd="'row-odd'">
+                    {{ (datasource.page - 1) * 10 + $index + 1 }}.
+                    <a describe="item['@id']">
+                        {{ item['http://schema.org/streetAddress'] | value }}, {{ item['http://schema.org/postalCode'] | value }} {{ item['http://schema.org/addressLocality'] | value }}
+                    </a>
+                </div>
+            </div>
+
+            <div class="well well-lg text-center" ng-if="datasource.isEmpty">
+                Server responded with an empty result.
+            </div>
+
+            <loading-bar ng-show="datasource.isLoading"></loading-bar>
+
+            <div datapager source="datasource" target="results" items-per-page="10" total-count="{{ $property.count }}"></div>
+        </div>
+
+    </div>
+</div>

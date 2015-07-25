@@ -1,0 +1,8 @@
+@media (min-width: 992px) {
+
+    .layout-two-columns .side-panel .col-sm-3, .layout-two-columns .side-panel .col-sm-9 {
+        float: none;
+        width: auto;
+    }
+
+}

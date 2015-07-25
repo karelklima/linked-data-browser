@@ -33,7 +33,9 @@
                 };
 
                 this.request = function (api, params) {
+                    console.log(params);
                     params = params || {};
+                    console.log(params);
                     params.endpoint = State.getEndpoint().alias;
                     return $http.get(api, {params: params})
                         .then(function(result) {

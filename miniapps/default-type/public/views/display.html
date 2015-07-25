@@ -1,0 +1,8 @@
+<div ng-controller="MiniappController" class="miniapp-underlined">
+    <div class="col-sm-3">
+        <a describe resource="rdf:type">rdf:type</a>
+    </div>
+    <div class="col-sm-9">
+        <span describe-list="$graph['@type'] | filter:id" filter="contract"></span>
+    </div>
+</div>

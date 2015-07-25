@@ -1,0 +1,21 @@
+<div ng-controller="DefaultSubjectRelationController" class="miniapp">
+    <div class="col-sm-3">
+        <a describe resource="{{ $property['@id'] }}">{{ $property['@id'] | contract }}</a>
+    </div>
+    <div class="col-sm-9">
+        <div ng-switch="submode" ng-init="sample = $property.data[0]">
+            <span ng-switch-when="literal">{{ sample }}</span>
+            <span ng-switch-when="value">
+                {{ sample | value }}
+            </span>
+            <span ng-switch-when="object">
+                <a describe="sample['@id']">
+                    {{ sample | label | contract | truncateUriLarge }}
+                </a>
+            </span>
+            <span ng-if="$property.count > 1" class="text-muted">
+                (+ {{ $property.count - 1 }} more)
+            </span>
+        </div>
+    </div>
+</div>

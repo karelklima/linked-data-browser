@@ -45,7 +45,7 @@
                     });
                 };
 
-                this.describeProperty = function(resource, property, limit, offset) {
+                this.describeProperty = function(resource, property, limit, offset, requestedProperties) {
                     var api = property.relation == 'object'
                         ? '/api/describe-property-object'
                         : '/api/describe-property-subject';
@@ -54,7 +54,8 @@
                         property: property['property'],
                         endpoint: State.getEndpoint().alias,
                         limit: limit || 10,
-                        offset: offset || 0
+                        offset: offset || 0,
+                        'requested-properties': requestedProperties
                     }}).then(function(response) {
                         return response.data['@graph'][0];
                     });

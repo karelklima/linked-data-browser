@@ -1,0 +1,15 @@
+<div ng-controller="DefaultObjectRelationController" class="miniapp">
+    <div class="col-sm-3">
+        is <a describe resource="{{ $property['@id'] }}">{{ $property | label | contract | truncateUri }}</a> of
+    </div>
+    <div class="col-sm-9">
+        <div ng-init="sample = $property.data[0]">
+            <a describe="sample['@id']">
+                {{ sample | label | contract | truncateUriLarge }}
+            </a>
+            <span ng-if="$property.count > 1" class="text-muted">
+                (+ {{ $property.count - 1 }} more)
+            </span>
+        </div>
+    </div>
+</div>

@@ -4,7 +4,9 @@ var config = require('../../config');
 module.exports = function(query) {
 
     query.prepareParams = function(params) {
-        params['requested-properties'] = config.describeQuery.properties;
+        if (!_.isArray(params['requested-properties'])) {
+            params['requested-properties'] = config.describeQuery.properties;
+        }
         params['limit'] = params['limit'] || config.describeQuery.sampleCount;
         return params;
     };
@@ -15,7 +17,6 @@ module.exports = function(query) {
             "label" : "http://my/label",
             "relation" : "http://my/relation",
             "count" : "http://my/count",
-            "graph" : "http://my/graph",
             "data" : "http://my/data"
         }
     };
@@ -34,6 +35,18 @@ module.exports = function(query) {
             mainObject['relation'] = "object";
         }
 
+        var sampleTypes = [];
+        _.forEach(mainObject.data, function(object) {
+            if (!_.isUndefined(object['@type'])) {
+                _.forEach(object['@type'], function(type) {
+                    if (!_.contains(sampleTypes, type['@id'])) {
+                        sampleTypes.push(type['@id']);
+                    }
+                })
+            }
+        });
+        mainObject.sampleTypes = sampleTypes;
+
         return response
     };
 
@@ -43,8 +56,8 @@ module.exports = function(query) {
             "label" : ["array", []],
             "relation" : ["string", "undefined"],
             "count": ["number", 0],
-            "graph": ["array", []],
-            "data": ["array", []]
+            "data": ["array", []],
+            "sampleTypes": ["array", []]
         }
     };
 
