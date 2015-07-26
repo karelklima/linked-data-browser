@@ -126,4 +126,4 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 var httpServer = http.createServer(app);
-httpServer.listen(config.http ? config.http.port : config.port);
+httpServer.listen(config.httpPort);

@@ -1,31 +1,30 @@
 PREFIX my: <http://my/>
 
 CONSTRUCT{
-  ?resource rdf:type ?type ;
-    my:text ?text ;
-    my:label ?label ;
+  ?resource
+    rdf:type ?type ;
     my:graph ?graph ;
-    my:score ?sc .
+    my:text ?shortenText ;
+    my:score ?maxScore .
 }
 
 WHERE {
-  SELECT DISTINCT ?resource ?type ?text ?label ?sc ?graph
-  {{ from | no-escape }}
-  WHERE {
-    GRAPH ?graph {
-        {{ valuesType | no-escape }}
-    	?resource a ?type .
-    	{{ valuesProperty | no-escape }}
-    	?resource ?property ?text .
-    	?text bif:contains '{{ query | escape-single-quotes}}'
-    	OPTION (SCORE ?sc) .
-    	OPTIONAL {
-    	    VALUES ?labelProperty { {{ labels | escape-uri-list }} }
-    	    ?resource ?labelProperty ?label
-    	}
-    }
+  {
+      SELECT DISTINCT ?resource (SAMPLE(?text) AS ?text) (MAX(?sc) AS ?maxScore)
+      WHERE {
+          {{ valuesType | no-escape }}
+          ?resource a ?type .
+          {{ valuesProperty | no-escape }}
+          ?resource ?property ?text .
+          ?text bif:contains '{{ query | escape-single-quotes}}'
+          OPTION (SCORE ?sc) .
+      }
+      GROUP BY ?resource
+      #ORDER BY DESC(?maxScore)
+      LIMIT {{ limit | default:20 }}
+      OFFSET {{ offset | default:0 }}
   }
-  ORDER BY DESC( ?sc)
-  LIMIT {{ limit | default:10 }}
-  OFFSET {{ offset | default:0 }}
+  ?resource a ?type .
+  GRAPH ?graph { ?resource ?p ?o }
+  BIND(IF(STRLEN(str(?text)) > 500, CONCAT(SUBSTR(str(?text), 1, 500), "..."), str(?text)) AS ?shortenText)
 }

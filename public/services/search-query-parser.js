@@ -6,7 +6,7 @@
 
         .service('SearchQueryParser', ['$rootScope', '$q', 'lodash', function ($rootScope, $q, _) {
 
-            var parseRegex = /( |^)(type:|property:|graph:)([a-z]+:[a-zA-Z0-9_-]+(?= |$)|http:\/\/[^ ]+(?= |$))/g;
+            var parseRegex = /( |^)(type:|property:|graph:)([a-z-]+:[a-zA-Z0-9_-]+(?= |$)|http:\/\/[^ ]+(?= |$))/g;
             var resourceRegex = /^(http:\/\/[^ ]+|[a-z]+:[a-zA-Z0-9_-]+)$/;
 
             function parseQueryAttributes(query) {

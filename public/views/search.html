@@ -21,12 +21,12 @@
 
     <table class="table" ng-hide="isEmpty()">
         <tr>
-            <th nowrap>Entity</th>
+            <th>Entity</th>
             <th>Text</th>
         </tr>
         <tr ng-repeat="result in results">
-            <td nowrap>
-                <span class="text-muted">@id</span> <a describe resource="{{ result['@id'] }}">{{ result['@id'] | truncateUri }}</a><br/>
+            <td>
+                <span class="text-muted">@id</span> <b><a describe resource="{{ result['@id'] }}">{{ result['@id'] | truncateUri }}</a></b><br/>
                 <span class="text-muted">@type</span> <small class="text-muted" describe-list="result['@type']" filter="contract"></small><br/>
                 <div print-ids="result.graph"></div>
             </td>

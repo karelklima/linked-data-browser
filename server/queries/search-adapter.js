@@ -7,14 +7,6 @@ module.exports = function(query) {
 
         params.labels = config.searchQuery.labels;
 
-        params.from = "";
-        if (_.has(params, 'datasets')) {
-            var datasets = "x";
-        }
-        _.forEach(params.graphs, function(graph) {
-            params.from = params.from + "FROM NAMED <" + graph + ">\n";
-        });
-
         params.valuesType = "";
         if (_.isArray(params.types) && params.types.length > 0) {
             var types = _.map(params.types, function(type) {
@@ -40,7 +32,7 @@ module.exports = function(query) {
         return params;
     };
 
-    query.getAdvancedContext = function() {
+    query.getContext = function() {
         return {
             "text" : "http://my/text",
             "label" : "http://my/label",
@@ -48,5 +40,15 @@ module.exports = function(query) {
             "score" : "http://my/score"
         }
     };
+
+    query.prepareResponse = function(response) {
+        if (_.isArray(response['@graph'])) {
+            _.forEach(response['@graph'], function(result) {
+                result['score'] = result['score'][0];
+            });
+            response['@graph'] = _(response['@graph']).sortBy('score').reverse().value();
+        }
+        return response;
+    }
 
 };

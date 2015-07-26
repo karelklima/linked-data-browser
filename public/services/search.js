@@ -14,7 +14,7 @@
                         query: query,
                         "types[]": types,
                         "properties[]": properties,
-                        "graphs[]": graphs,
+                        "endpoint-param-default-graph-uri[]": graphs,
                         limit: limit,
                         offset: offset
                     }})

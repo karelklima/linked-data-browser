@@ -11,23 +11,19 @@ var miniapps = require('../models/miniapps');
 
 module.exports = function(app) {
 
-    if (config.env == 'development' && config.aggregate !== true) {
+    app.use(assetsController.injectAssets);
 
-        app.use(assetsController.injectAssets);
+    app.use('/bower_components', express.static('bower_components'));
+    app.use('/public', express.static('public'));
 
-        app.use('/bower_components', express.static('bower_components'));
-        app.use('/public', express.static('public'));
+    _.forEach(layouts.getAll(), function(layout) {
+        var publicDir = 'layouts/' + layout.id + '/public';
+        app.use('/' + publicDir, express.static(publicDir));
+    });
 
-        _.forEach(layouts.getAll(), function(layout) {
-            var publicDir = 'layouts/' + layout.id + '/public';
-            app.use('/' + publicDir, express.static(publicDir));
-        });
-
-        _.forEach(miniapps.getAll(), function(miniapp) {
-            var publicDir = 'miniapps/' + miniapp.id + '/public';
-            app.use('/' + publicDir, express.static(publicDir));
-        });
-
-    }
+    _.forEach(miniapps.getAll(), function(miniapp) {
+        var publicDir = 'miniapps/' + miniapp.id + '/public';
+        app.use('/' + publicDir, express.static(publicDir));
+    });
 
 };

@@ -13,9 +13,7 @@ module.exports = function(app) {
 
     app.set('showStackError', true);
 
-    if (config.env == 'development') {
-        app.set('json spaces', 4);
-    }
+    app.set('json spaces', 4);
 
     // Prettify HTML
     app.locals.pretty = true;
@@ -45,15 +43,13 @@ module.exports = function(app) {
     app.set('view engine', 'html');
 
     // Dynamic helpers
-    app.use(helpers(config.app.name));
+    app.use(helpers(config.title));
 
     // Flash messages support
     app.use(flash());
 
     app.use(modRewrite([
-
         '!^/api/.*|\\.html|\\.js|\\.css|\\.swf|\\.jp(e?)g|\\.png|\\.gif|\\.svg|\\.eot|\\.ttf|\\.woff|\\.pdf$ / [L]'
-
     ]));
 
 };
