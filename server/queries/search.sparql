@@ -20,7 +20,7 @@ WHERE {
           OPTION (SCORE ?sc) .
       }
       GROUP BY ?resource
-      #ORDER BY DESC(?maxScore)
+      ORDER BY DESC(?maxScore)
       LIMIT {{ limit | default:20 }}
       OFFSET {{ offset | default:0 }}
   }

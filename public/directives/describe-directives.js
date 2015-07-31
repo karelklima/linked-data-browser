@@ -86,10 +86,6 @@
             };
         })
 
-        .directive('printValue', function() {
-
-        })
-
         .directive('printValues', function() {
             return {
                 restrict: 'AE',
