@@ -12,7 +12,7 @@
         </span>
         <span ng-if="organizationLoaded">
             <span ng-init="organization = $property.data[0]">
-                <a describe="sampleAddress['@id']">{{ organization['title'] | value }}</a><br/>
+                <a describe="organization['@id']">{{ organization['title'] | value }}</a><br/>
                 ID: {{ organization['identifier'] | value }}
             </span>
         </span>

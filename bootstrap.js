@@ -1,3 +1,5 @@
+/// <reference path="typings/tsd.d.ts"/>
+
 console.log("LinkedData Explorer");
 console.log("Initializing...");
 
