@@ -1,3 +1,5 @@
+/// <reference path="../typings/tsd.d.ts"/>
+
 (function() {
 
     angular.module('app.controllers', []);
@@ -35,8 +37,8 @@
     ])
 
         // Routing
-        .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider',
-            function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider){
+        .config(['$stateProvider', '$urlRouterProvider', '$urlMatcherFactoryProvider', 'lodash',
+            function($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider, _){
 
                 $urlRouterProvider.when('', '/');
                 $urlRouterProvider.otherwise(function(injector, location){
@@ -56,6 +58,24 @@
                     $normalize: function(val){
                         return this.decode(val);
                     },
+                    pattern: /[^/]*/
+                });
+                function uriToString(val) {
+                    return angular.toJson({"@id":val});
+                }
+                function uriFromString(val) {
+                    if (!_.startsWith(val, "{")) {
+                        return val;
+                    }
+                    return angular.fromJson(val)["@id"];
+                }
+                $urlMatcherFactoryProvider.type('uri', {
+                    encode: uriToString,
+                    decode: uriFromString,
+                    //is: angular.isObject,
+                    is: function(val) { return val == null || !angular.isDefined(val) || typeof val === "string"; },
+                    equals: angular.equals,
+                    $normalize: function(val){ return this.decode(val); },
                     pattern: /[^/]*/
                 });
 
@@ -132,15 +152,15 @@
                         templateUrl: '/public/views/describe.html'
                     })
                     .state('root.describe.formatted', {
-                        url: '/describe?resource&endpoint&language',
+                        url: '/describe?{resource:uri}&endpoint&language',
                         templateUrl: '/public/views/describe-formatted.html'
                     })
                     .state('root.describe.raw', {
-                        url: '/describe-raw?resource&endpoint&language',
+                        url: '/describe-raw?{resource:uri}&endpoint&language',
                         templateUrl: '/public/views/describe-raw.html'
                     })
                     .state('root.describe.edit', {
-                        url: '/describe-edit?resource&endpoint&language',
+                        url: '/describe-edit?{resource:uri}&endpoint&language',
                         templateUrl: '/public/views/describe-edit.html',
                         data: {
                             requiresAdmin: true
