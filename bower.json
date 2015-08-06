@@ -20,22 +20,22 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.4.1",
-    "angular-ui-router": "~0.2.15",
-    "angular-bootstrap": "~0.13.0",
-    "angular-jwt": "~0.0.9",
-    "angular-cookies": "~1.4.1",
-    "a0-angular-storage": "~0.0.11",
-    "angular-animate": "~1.4.1",
-    "ng-lodash": "~0.2.3",
-    "angular-loading-bar": "~0.8.0",
-    "angular-toastr": "~1.4.1",
-    "angular-smart-table": "~2.1.0",
-    "angular-sanitize": "~1.4.3",
-    "angular-ui-select": "~0.12.0",
-    "ng-sortable": "~1.2.2"
+    "angular": "=1.4.3",
+    "angular-ui-router": "=0.2.15",
+    "angular-bootstrap": "=0.13.2",
+    "angular-jwt": "=0.0.9",
+    "angular-cookies": "=1.4.3",
+    "a0-angular-storage": "=0.0.11",
+    "angular-animate": "=1.4.1",
+    "ng-lodash": "=0.2.3",
+    "angular-loading-bar": "=0.8.0",
+    "angular-toastr": "=1.4.1",
+    "angular-smart-table": "=2.1.1",
+    "angular-sanitize": "=1.4.3",
+    "angular-ui-select": "=0.12.1",
+    "ng-sortable": "=1.2.2"
   },
   "resolutions": {
-    "angular": "~1.4.1"
+    "angular": "=1.4.3"
   }
 }
