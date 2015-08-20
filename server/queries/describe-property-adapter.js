@@ -21,7 +21,7 @@ module.exports = function(query) {
         }
     };
 
-    query.prepareResponse = function(response) {
+    query.prepareResponse = function(response, requestParams) {
 
         if (!_.isArray(response['@graph']) || response['@graph'].length != 1) {
             throw new Error("Invalid SPARQL response, one object expected");

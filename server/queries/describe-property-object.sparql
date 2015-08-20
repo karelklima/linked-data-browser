@@ -1,3 +1,7 @@
+PREFIX dcterms: <http://purl.org/dc/terms/> 
+PREFIX rdfs: <http://www.w3schools.com/RDF/rdf-schema.xml>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX my: <http://my/>
 
 CONSTRUCT {
@@ -20,11 +24,16 @@ WHERE {
         SELECT (COUNT(DISTINCT ?dist) as ?count)
         WHERE { ?dist {{ property }} {{ resource }} . }
     }
-    OPTIONAL {
+    {
         VALUES ?property { {{ requested-properties | escape-uri-list }} } .
         ?object ?property ?value .
     }
-    OPTIONAL {
+    UNION
+    {
         {{ property }} rdfs:label ?label .
+    }
+    UNION
+    {
+        {{ resource }} {{ property }} [] .
     }
 }

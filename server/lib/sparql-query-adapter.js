@@ -27,7 +27,7 @@ function SparqlQueryAdapter() {
         return Q()
             .then(function () {
                 if (!_.startsWith(responseString, '{')) {
-                    throw new ToasterError("Invalid SPARQL query issued", 500, responseString);
+                    throw new ToasterError("Invalid SPARQL endpoint response, possibly due to FUP limits.", 500, responseString);
                 }
                 return responseString;
             })
